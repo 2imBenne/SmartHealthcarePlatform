@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Smart Healthcare</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen text-slate-800 flex items-center justify-center p-4">
+
+    <!-- Card container -->
+    <div class="w-full max-w-md glass p-8 rounded-3xl shadow-2xl shadow-blue-500/10 space-y-6">
+        
+        <!-- Logo/Header -->
+        <div class="text-center space-y-2">
+            <a href="/" class="inline-flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                    S
+                </div>
+                <span class="text-lg font-bold tracking-tight text-slate-900">Smart<span class="text-blue-600">Healthcare</span></span>
+            </a>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">Chào Mừng Trở Lại!</h2>
+            <p class="text-sm text-slate-500">Đăng nhập tài khoản y tế số của bạn</p>
+        </div>
+
+        <!-- Alert Message Container -->
+        <div id="errorAlert" class="hidden bg-rose-50 text-rose-600 p-4 rounded-2xl text-sm font-medium border border-rose-100 transition-all">
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-4">
+            <div class="space-y-1">
+                <label for="email" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</label>
+                <input type="email" id="email" required
+                       class="w-full px-4 py-3.5 bg-white/80 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+                       placeholder="example@healthcare.com">
+            </div>
+
+            <div class="space-y-1">
+                <div class="flex justify-between">
+                    <label for="password" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Mật Khẩu</label>
+                </div>
+                <input type="password" id="password" required
+                       class="w-full px-4 py-3.5 bg-white/80 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+                       placeholder="••••••••">
+            </div>
+
+            <button type="submit"
+                    class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5 active:translate-y-0 mt-2 text-sm">
+                Đăng Nhập
+            </button>
+        </form>
+
+        <!-- Redirect to register -->
+        <p class="text-center text-sm text-slate-500">
+            Chưa có tài khoản? 
+            <a href="/register" class="text-blue-600 font-semibold hover:underline">Đăng ký ngay</a>
+        </p>
+
+    </div>
+
+    <!-- Login JS Logic -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorAlert = document.getElementById('errorAlert');
+
+            errorAlert.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Email hoặc mật khẩu không chính xác!');
+                }
+
+                // 1. Lưu JWT vào Cookie để dùng cho Thymeleaf load trang tiếp theo
+                document.cookie = "jwt=" + data.token + "; path=/; max-age=36000";
+
+                // 2. Điều hướng tương ứng với Role của User
+                if (data.role === 'ROLE_PATIENT') {
+                    window.location.href = '/patient/dashboard';
+                } else if (data.role === 'ROLE_DOCTOR') {
+                    window.location.href = '/doctor/dashboard';
+                } else if (data.role === 'ROLE_ADMIN') {
+                    window.location.href = '/admin/dashboard';
+                } else {
+                    throw new Error('Hệ thống chưa hỗ trợ vai trò này!');
+                }
+
+            } catch (err) {
+                errorAlert.textContent = err.message;
+                errorAlert.classList.remove('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>

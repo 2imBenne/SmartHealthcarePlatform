@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Điều Khiển Admin/Dược Sĩ - Smart Healthcare</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .sidebar {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800">
+
+    <!-- Sidebar Menu -->
+    <aside class="w-full md:w-64 sidebar text-slate-300 flex flex-col justify-between p-6">
+        <div class="space-y-8">
+            <!-- Brand -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg">S</div>
+                <span class="text-lg font-bold tracking-tight text-white">Smart<span class="text-blue-500">Care</span></span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-2">
+                <button onclick="switchTab('medicinesTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-medicinesTab">
+                    💊 Quản Lý Kho Thuốc
+                </button>
+                <button onclick="switchTab('prescriptionsTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-medium text-left text-sm" id="btn-prescriptionsTab">
+                    📥 Cấp Phát Đơn Thuốc
+                </button>
+            </nav>
+        </div>
+
+        <!-- Logout Button -->
+        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8">
+            🚪 Đăng Xuất
+        </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-6 md:p-10 space-y-8 overflow-y-auto max-w-7xl mx-auto w-full">
+        
+        <!-- Welcome banner -->
+        <header class="flex justify-between items-center bg-gradient-to-r from-blue-700 to-indigo-800 p-6 md:p-8 rounded-3xl text-white shadow-xl shadow-blue-500/10">
+            <div class="space-y-1">
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Hệ Thống Quản Trị & Cấp Phát</h1>
+                <p class="text-blue-100 text-sm">Quản lý kho dược phẩm và xác nhận cấp phát thuốc ngoại trú.</p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs bg-white/20 py-1.5 px-3 rounded-full font-bold">🔐 Role: Admin/Pharmacist</span>
+            </div>
+        </header>
+
+        <!-- Dynamic Tabs -->
+        
+        <!-- 1. Medicines Management (CORE-04) -->
+        <section id="medicinesTab" class="tab-content space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4">
+                <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">💊 Danh Mục Dược Phẩm Trong Kho</h2>
+                <button onclick="openMedicineModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-2xl shadow transition-all">
+                    + Thêm thuốc mới
+                </button>
+            </div>
+
+            <!-- Table of medicines -->
+            <div class="glass rounded-3xl overflow-hidden shadow-lg border border-slate-200/50">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-100 text-slate-500 font-bold text-xs uppercase">
+                            <tr>
+                                <th class="p-4">Tên thuốc</th>
+                                <th class="p-4">Nhà sản xuất</th>
+                                <th class="p-4">Số lượng tồn</th>
+                                <th class="p-4">Đơn giá</th>
+                                <th class="p-4">Trạng thái</th>
+                                <th class="p-4 text-center">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="med : ${medicines}" class="border-b border-slate-100 hover:bg-slate-50 transition-all">
+                                <td class="p-4 font-bold text-slate-900" th:text="${med.name}">Tên thuốc</td>
+                                <td class="p-4 text-slate-500" th:text="${med.manufacturer}">Hãng</td>
+                                <td class="p-4 text-slate-700 font-medium" th:text="${med.stockQuantity}">0</td>
+                                <td class="p-4 text-blue-600 font-bold" th:text="${#numbers.formatDecimal(med.unitPrice, 1, 'DEFAULT', 0, 'DEFAULT') + ' đ'}">0 đ</td>
+                                <td class="p-4">
+                                    <span th:if="${med.isActive}" class="text-[10px] bg-emerald-100 text-emerald-700 py-1 px-2.5 rounded-full font-bold">Đang Bán</span>
+                                    <span th:if="${!med.isActive}" class="text-[10px] bg-rose-100 text-rose-700 py-1 px-2.5 rounded-full font-bold">Ngừng Bán</span>
+                                </td>
+                                <td class="p-4 flex gap-2 justify-center">
+                                    <button th:onclick="'openEditMedicineModal(' + ${med.id} + ', \'' + ${med.name} + '\', \'' + ${med.manufacturer} + '\', ' + ${med.stockQuantity} + ', ' + ${med.unitPrice} + ')'"
+                                            class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold py-1.5 px-3 rounded-lg border border-blue-200 text-xs">
+                                        Sửa
+                                    </button>
+                                    <button th:if="${med.isActive}"
+                                            th:onclick="'deleteMedicine(' + ${med.id} + ')'"
+                                            class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-1.5 px-3 rounded-lg border border-rose-200 text-xs">
+                                        Xóa mềm
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Prescription Dispensing Tab (CORE-08) -->
+        <section id="prescriptionsTab" class="tab-content hidden space-y-6">
+            <div class="border-b border-slate-200 pb-4">
+                <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">📥 Yêu Cầu Cấp Phát Đơn Thuốc Ngoại Trú</h2>
+            </div>
+
+            <!-- List of pending prescriptions -->
+            <div class="grid grid-cols-1 gap-6">
+                <div th:each="pres : ${prescriptions}" class="glass p-6 md:p-8 rounded-3xl space-y-5 hover:shadow-lg transition-all border-l-4 border-amber-500">
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-bold text-slate-900" th:text="${'Bệnh án #' + pres.medicalRecord.id}">Bệnh án</span>
+                                <span class="text-xs bg-amber-100 text-amber-700 py-1 px-3 rounded-full font-bold">Chờ Cấp Phát</span>
+                            </div>
+                            <p class="text-slate-500 text-xs">
+                                Bệnh nhân: <strong class="text-slate-700" th:text="${pres.medicalRecord.appointment.patient.userProfile.fullName}">Bệnh nhân</strong> 
+                                | Chẩn đoán: <strong class="text-slate-700" th:text="${pres.medicalRecord.diagnosis}">Chẩn đoán</strong>
+                            </p>
+                        </div>
+                        <button th:onclick="'dispensePrescription(' + ${pres.id} + ')'"
+                                class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-2xl shadow shadow-emerald-500/20 text-sm transition-all hover:scale-105">
+                            ✅ Xác Nhận Phát Thuốc
+                        </button>
+                    </div>
+
+                    <!-- Medicine details in prescription -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Chi tiết đơn thuốc kê</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left border border-slate-200/50 rounded-2xl overflow-hidden">
+                                <thead class="bg-slate-100 text-slate-500 font-bold uppercase">
+                                    <tr>
+                                        <th class="p-3">Thuốc</th>
+                                        <th class="p-3">Số lượng</th>
+                                        <th class="p-3">Liều dùng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="det : ${pres.details}" class="border-b border-slate-100 bg-white">
+                                        <td class="p-3 font-semibold text-slate-800" th:text="${det.medicine.name}">Tên thuốc</td>
+                                        <td class="p-3 text-slate-600" th:text="${det.quantity}">0</td>
+                                        <td class="p-3 text-slate-600" th:text="${det.dosageInstruction}">Cách dùng</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${prescriptions == null or prescriptions.isEmpty()}" class="glass p-8 text-center text-slate-500 rounded-3xl">
+                    Hiện chưa có đơn thuốc nào đang chờ cấp phát.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Medicine Modal (Add/Edit) -->
+    <div id="medicineModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-white p-8 rounded-3xl shadow-2xl space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-slate-900">💊 Thêm Thuốc Mới</h3>
+                <button onclick="closeMedicineModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
+            </div>
+
+            <form id="medicineForm" class="space-y-4">
+                <input type="hidden" id="medIdInput">
+
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-slate-400 uppercase">Tên thuốc</label>
+                    <input type="text" id="medName" required
+                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none" placeholder="Ví dụ: Paracetamol 500mg">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-slate-400 uppercase">Nhà sản xuất</label>
+                    <input type="text" id="medManufacturer" required
+                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none" placeholder="Ví dụ: Dược Hậu Giang">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 uppercase">Số lượng tồn kho</label>
+                        <input type="number" id="medQty" min="0" required
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 uppercase">Đơn giá (VNĐ)</label>
+                        <input type="number" id="medPrice" min="0" required
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow shadow-blue-500/20 text-sm">
+                    🚀 Lưu Dữ Liệu
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS Controllers -->
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white');
+            });
+            document.getElementById('btn-' + tabId).classList.add('bg-slate-800', 'text-white');
+        }
+
+        function openMedicineModal() {
+            document.getElementById('medIdInput').value = '';
+            document.getElementById('medName').value = '';
+            document.getElementById('medManufacturer').value = '';
+            document.getElementById('medQty').value = '';
+            document.getElementById('medPrice').value = '';
+            document.getElementById('modalTitle').textContent = '💊 Thêm Thuốc Mới';
+            document.getElementById('medicineModal').classList.remove('hidden');
+        }
+
+        function openEditMedicineModal(id, name, manufacturer, qty, price) {
+            document.getElementById('medIdInput').value = id;
+            document.getElementById('medName').value = name;
+            document.getElementById('medManufacturer').value = manufacturer;
+            document.getElementById('medQty').value = qty;
+            document.getElementById('medPrice').value = price;
+            document.getElementById('modalTitle').textContent = '📝 Cập Nhật Dữ Liệu Thuốc';
+            document.getElementById('medicineModal').classList.remove('hidden');
+        }
+
+        function closeMedicineModal() {
+            document.getElementById('medicineModal').classList.add('hidden');
+        }
+
+        // Tạo/Sửa thuốc (CORE-04)
+        document.getElementById('medicineForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('medIdInput').value;
+            const name = document.getElementById('medName').value;
+            const manufacturer = document.getElementById('medManufacturer').value;
+            const stockQuantity = parseInt(document.getElementById('medQty').value);
+            const unitPrice = parseFloat(document.getElementById('medPrice').value);
+
+            const token = getJwtFromCookie();
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? '/api/admin/medicines/' + id : '/api/admin/medicines';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ name, manufacturer, stockQuantity, unitPrice })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Lỗi lưu dữ liệu thuốc.');
+                }
+
+                alert('Lưu thông tin thuốc thành công!');
+                location.reload();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+
+        // Xóa thuốc mềm (CORE-04)
+        async function deleteMedicine(id) {
+            if (!confirm('Bạn có chắc chắn muốn ngừng bán (xóa mềm) sản phẩm dược phẩm này không?')) return;
+
+            const token = getJwtFromCookie();
+
+            try {
+                const response = await fetch('/api/admin/medicines/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Lỗi khi xóa thuốc.');
+                }
+
+                alert('Đã ngừng bán dược phẩm (Xóa mềm thành công).');
+                location.reload();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        // Cấp phát thuốc (CORE-08)
+        async function dispensePrescription(presId) {
+            if (!confirm('Xác nhận cấp phát thuốc cho đơn này? Hệ thống sẽ tự động đối chiếu tồn kho và trừ lùi.')) return;
+
+            const token = getJwtFromCookie();
+
+            try {
+                const response = await fetch('/api/admin/medicines/prescriptions/' + presId + '/dispense', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể cấp phát! Số lượng thuốc tồn kho không đủ để cấp phát, giao dịch đã bị hủy (Rollback).');
+                }
+
+                alert('Cấp phát thành công! Kho dược phẩm đã được trừ lùi an toàn.');
+                location.reload();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        function getJwtFromCookie() {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; jwt=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return '';
+        }
+
+        function logout() {
+            document.cookie = "jwt=; path=/; max-age=0";
+            window.location.href = '/login';
+        }
+    </script>
+
+</body>
+</html>
