@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Healthcare - Nền Tảng Y Tế Số Toàn Diện</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter and Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,94 +13,121 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Outfit', 'sans-serif'],
                     },
+                    colors: {
+                        medical: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
                 }
             }
         }
     </script>
-    <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between font-sans">
 
     <!-- Header / Navbar -->
-    <header class="w-full py-4 px-6 md:px-12 flex justify-between items-center glass sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">
-                S
+    <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-xl shadow-md">
+                    S
+                </div>
+                <span class="text-xl font-title font-bold tracking-tight text-slate-900">Smart<span class="text-sky-600">Healthcare</span></span>
             </div>
-            <span class="text-xl font-bold tracking-tight text-slate-900">Smart<span class="text-blue-600">Healthcare</span></span>
+            
+            <nav class="flex gap-4 items-center">
+                <a href="/login" class="text-sm font-semibold text-slate-600 hover:text-sky-600 transition-colors px-3 py-2">Đăng Nhập</a>
+                <a href="/register" class="text-sm font-semibold bg-sky-600 hover:bg-sky-700 text-white py-2.5 px-5 rounded-lg shadow-sm transition-all hover:shadow-md">Đăng Ký</a>
+            </nav>
         </div>
-        
-        <nav class="flex gap-4 items-center">
-            <a href="/login" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Đăng Nhập</a>
-            <a href="/register" class="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-5 rounded-xl shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5">Đăng Ký</a>
-        </nav>
     </header>
 
     <!-- Main Section -->
-    <main class="flex-grow flex flex-col md:flex-row items-center justify-center gap-12 px-6 md:px-16 py-12 max-w-7xl mx-auto w-full">
+    <main class="flex-grow flex flex-col lg:flex-row items-center justify-between gap-16 px-6 md:px-12 py-16 max-w-7xl mx-auto w-full">
         <!-- Hero Text -->
-        <div class="flex-1 text-center md:text-left space-y-6">
-            <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 py-1.5 px-3 rounded-full text-xs font-semibold tracking-wider uppercase">
-                ✨ Công Nghệ Y Tế Tương Lai
+        <div class="flex-1 space-y-6 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 bg-sky-50 text-sky-700 py-1.5 px-4 rounded-full text-xs font-semibold uppercase tracking-wider border border-sky-100">
+                🏥 CỔNG THÔNG TIN Y TẾ SỐ QUỐC GIA
             </div>
-            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
-                Hệ Thống <br><span class="gradient-text">Khám Bệnh Thông Minh</span>
+            <h1 class="text-4xl md:text-5xl font-title font-bold tracking-tight text-slate-900 leading-tight">
+                Chăm sóc Sức khỏe Chủ động <br>
+                <span class="text-sky-600">Thông minh & Toàn diện</span>
             </h1>
-            <p class="text-slate-600 text-lg max-w-lg leading-relaxed">
-                Đăng ký lịch khám tức thì, nhận kết quả chẩn đoán nhanh chóng và cấp phát thuốc an toàn thông qua nền tảng y tế số hiện đại.
+            <p class="text-slate-600 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Nền tảng trực tuyến kết nối bệnh nhân và đội ngũ bác sĩ chuyên khoa đầu ngành. Đăng ký lịch hẹn nhanh chóng, theo dõi bệnh án điện tử tập trung và cấp phát thuốc an toàn theo quy chuẩn quốc tế.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a href="/register" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-8 rounded-2xl shadow-xl shadow-blue-500/30 transition-all hover:scale-105 text-center">
-                    Bắt đầu đặt lịch ngay
+            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a href="/register" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3.5 px-8 rounded-lg shadow-md hover:shadow-lg transition-all text-center">
+                    Đặt lịch khám ngay
                 </a>
-                <a href="/login" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold py-3.5 px-8 rounded-2xl transition-all text-center">
+                <a href="/login" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-semibold py-3.5 px-8 rounded-lg transition-all text-center">
                     Đăng nhập tài khoản
                 </a>
             </div>
+
+            <!-- Trust Badges -->
+            <div class="pt-8 border-t border-slate-200 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+                <div class="text-center lg:text-left">
+                    <div class="text-2xl font-bold text-slate-900 font-title">50+</div>
+                    <div class="text-xs text-slate-500 font-medium">Bác sĩ chuyên khoa</div>
+                </div>
+                <div class="text-center lg:text-left">
+                    <div class="text-2xl font-bold text-slate-900 font-title">10,000+</div>
+                    <div class="text-xs text-slate-500 font-medium">Bệnh nhân tin dùng</div>
+                </div>
+                <div class="text-center lg:text-left">
+                    <div class="text-2xl font-bold text-slate-900 font-title">99%</div>
+                    <div class="text-xs text-slate-500 font-medium">Phản hồi hài lòng</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Decorative Illustration Grid -->
-        <div class="flex-1 w-full max-w-md md:max-w-none grid grid-cols-2 gap-4">
-            <div class="glass p-6 rounded-3xl space-y-4 hover:-translate-y-1 transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-2xl">🗓️</div>
-                <h3 class="font-bold text-lg text-slate-900">Đặt Lịch 24/7</h3>
-                <p class="text-slate-500 text-sm">Chủ động chọn bác sĩ, chọn chuyên khoa phù hợp chỉ với vài click.</p>
+        <!-- Decorative Info Grid (Clean Slate Professional Cards) -->
+        <div class="flex-1 w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-sky-300">
+                <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold mb-4">🗓️</div>
+                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Đặt lịch hẹn trực tuyến</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Chủ động lựa chọn bác sĩ, chuyên khoa khám và thời gian phù hợp chỉ trong 1 phút.</p>
             </div>
-            <div class="glass p-6 rounded-3xl space-y-4 hover:-translate-y-1 transition-all mt-8">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl">📋</div>
-                <h3 class="font-bold text-lg text-slate-900">Bệnh Án Điện Tử</h3>
-                <p class="text-slate-500 text-sm">Tra cứu trực quan toàn bộ kết quả chẩn đoán và đơn thuốc lịch sử.</p>
+            
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-emerald-300 sm:translate-y-4">
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold mb-4">📋</div>
+                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Hồ sơ bệnh án điện tử</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Xem lại triệu chứng, chẩn đoán chi tiết và dặn dò của bác sĩ mọi lúc mọi nơi.</p>
             </div>
-            <div class="glass p-6 rounded-3xl space-y-4 hover:-translate-y-1 transition-all -mt-8">
-                <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl">💊</div>
-                <h3 class="font-bold text-lg text-slate-900">Cấp Phát Thuốc</h3>
-                <p class="text-slate-500 text-sm">Kiểm soát tồn kho chặt chẽ, an toàn y tế và tránh quá bán thuốc.</p>
+
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-sky-300 sm:-translate-y-4">
+                <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold mb-4">💊</div>
+                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Quản lý kho dược phẩm</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Quy trình cấp phát thuốc khép kín kết hợp kiểm soát tồn kho chống bán lố.</p>
             </div>
-            <div class="glass p-6 rounded-3xl space-y-4 hover:-translate-y-1 transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">🔒</div>
-                <h3 class="font-bold text-lg text-slate-900">Bảo Mật JWT</h3>
-                <p class="text-slate-500 text-sm">Mã hóa mật khẩu BCrypt, phân quyền role nghiêm ngặt và tuyệt mật.</p>
+
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-amber-300">
+                <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold mb-4">🔒</div>
+                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Bảo mật dữ liệu tuyệt đối</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Xác thực mạnh mẽ qua mã hóa JWT và cơ chế phân quyền kiểm soát nghiêm ngặt.</p>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="w-full py-6 text-center text-sm text-slate-500 border-t border-slate-200/50 glass">
-        &copy; 2026 Smart Healthcare Platform. Thiết kế bởi JavaProject.
+    <footer class="w-full py-8 text-center text-sm text-slate-500 border-t border-slate-200 bg-white shadow-inner">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>&copy; 2026 Smart Healthcare Platform. Bảo lưu mọi quyền.</div>
+            <div class="flex gap-6 text-xs text-slate-400">
+                <a href="#" class="hover:text-sky-600">Điều khoản sử dụng</a>
+                <a href="#" class="hover:text-sky-600">Chính sách bảo mật</a>
+                <a href="#" class="hover:text-sky-600">Hỗ trợ 24/7</a>
+            </div>
+        </div>
     </footer>
 
 </body>

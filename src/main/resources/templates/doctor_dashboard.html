@@ -4,54 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Điều Khiển Bác Sĩ - Smart Healthcare</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter and Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 for beautiful popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Outfit', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
-    <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .sidebar {
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-        }
-    </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800">
+<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800 font-sans">
 
     <!-- Sidebar Menu -->
-    <aside class="w-full md:w-64 sidebar text-slate-300 flex flex-col justify-between p-6">
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-6 border-r border-slate-800">
         <div class="space-y-8">
             <!-- Brand -->
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg">S</div>
-                <span class="text-lg font-bold tracking-tight text-white">Smart<span class="text-blue-500">Care</span></span>
+                <div class="w-9 h-9 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-lg shadow">S</div>
+                <span class="text-lg font-title font-bold tracking-tight text-white">Smart<span class="text-sky-500">Care</span></span>
             </div>
 
             <!-- Navigation Links -->
-            <nav class="space-y-2">
-                <button onclick="switchTab('waitingListTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-waitingListTab">
+            <nav class="space-y-1">
+                <button onclick="switchTab('waitingListTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-waitingListTab">
                     🩺 Danh Sách Chờ Khám
                 </button>
             </nav>
         </div>
 
         <!-- Logout Button -->
-        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8">
+        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-rose-950/30 hover:bg-rose-900 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8 border border-rose-900/30">
             🚪 Đăng Xuất
         </button>
     </aside>
@@ -60,13 +52,13 @@
     <main class="flex-grow p-6 md:p-10 space-y-8 overflow-y-auto max-w-7xl mx-auto w-full">
         
         <!-- Welcome banner -->
-        <header class="flex justify-between items-center bg-gradient-to-r from-teal-600 to-emerald-600 p-6 md:p-8 rounded-3xl text-white shadow-xl shadow-teal-500/10">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 md:p-8 rounded-xl text-slate-800 shadow-sm">
             <div class="space-y-1">
-                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Bác sĩ: <span th:text="${doctor.userProfile.fullName}">Bác Sĩ Mẫu</span></h1>
-                <p class="text-teal-100 text-sm" th:text="${'Chuyên khoa: ' + doctor.specialty.name}">Chuyên khoa mẫu</p>
+                <h1 class="text-2xl md:text-3xl font-title font-bold tracking-tight text-slate-900">Bác sĩ: <span th:text="${doctor.user.profile.fullName}" class="text-sky-600">Bác Sĩ Mẫu</span></h1>
+                <p class="text-slate-500 text-sm" th:text="${'Chuyên khoa khoa học: ' + doctor.specialty.name}">Chuyên khoa mẫu</p>
             </div>
-            <div class="text-right">
-                <span class="text-xs bg-white/20 py-1.5 px-3 rounded-full font-bold">🩺 Chế độ làm việc</span>
+            <div>
+                <span class="text-xs bg-sky-50 text-sky-700 py-1.5 px-3 rounded-full font-bold border border-sky-200">🩺 Chế độ làm việc tích cực</span>
             </div>
         </header>
 
@@ -75,31 +67,33 @@
         <!-- Waiting List & Examination Tab -->
         <section id="waitingListTab" class="tab-content space-y-6">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
-                <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">🩺 Danh Sách Lịch Khám Trong Ngày</h2>
-                <span class="text-xs bg-blue-100 text-blue-700 py-1 px-3 rounded-full font-bold">Hôm nay</span>
+                <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">🩺 Danh Sách Lịch Khám Trong Ngày</h2>
+                <span class="text-xs bg-sky-50 text-sky-700 py-1 px-3 rounded-full font-bold border border-sky-200">Hôm nay</span>
             </div>
 
             <!-- Pending list -->
             <div class="space-y-4">
-                <div th:each="appt : ${confirmedAppointments}" class="glass p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-lg transition-all border-l-4 border-emerald-500">
-                    <div class="space-y-1.5">
+                <div th:each="appt : ${confirmedAppointments}" class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-sm transition-all border-l-4 border-emerald-500">
+                    <div class="space-y-2">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-slate-900" th:text="${appt.patient.userProfile.fullName}">Bệnh Nhân</span>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">Sẵn Sàng Khám</span>
+                            <span class="text-sm font-bold text-slate-900" th:text="${appt.patient.profile.fullName}">Bệnh Nhân</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-100">Sẵn Sàng Khám</span>
                         </div>
-                        <p class="text-slate-500 text-xs flex items-center gap-2">
+                        <p class="text-slate-500 text-xs flex items-center gap-3">
                             <span>⏰ Giờ khám: <strong class="text-slate-700" th:text="${appt.startTime + ' - ' + appt.endTime}">08:00 - 08:30</strong></span>
-                            <span>📞 SĐT: <strong class="text-slate-700" th:text="${appt.patient.userProfile.phoneNumber}">0912345678</strong></span>
+                            <span>📞 SĐT: <strong class="text-slate-700" th:text="${appt.patient.profile.phoneNumber}">0912345678</strong></span>
                         </p>
                         <p class="text-slate-600 text-sm" th:text="${'Triệu chứng khai báo: ' + appt.reason}">Lý do</p>
                     </div>
-                    <button th:onclick="'openExamModal(' + ${appt.id} + ', \'' + ${appt.patient.userProfile.fullName} + '\')'"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition-all">
+                    <button th:data-id="${appt.id}"
+                            th:data-name="${appt.patient != null && appt.patient.profile != null ? appt.patient.profile.fullName : ''}"
+                            onclick="openExamModal(this)"
+                            class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-sm hover:shadow transition-all text-sm">
                         🩺 Bắt Đầu Khám
                     </button>
                 </div>
 
-                <div th:if="${confirmedAppointments == null or confirmedAppointments.isEmpty()}" class="glass p-8 text-center text-slate-500 rounded-3xl">
+                <div th:if="${confirmedAppointments == null or confirmedAppointments.isEmpty()}" class="bg-white p-8 text-center text-slate-400 rounded-xl border border-slate-200">
                     Hiện chưa có ca khám nào ở trạng thái Chờ Khám (Đã Xác Nhận).
                 </div>
             </div>
@@ -108,10 +102,10 @@
     </main>
 
     <!-- Examination Modal (CORE-06) -->
-    <div id="examModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-2xl bg-white p-8 rounded-3xl shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+    <div id="examModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-2xl border border-slate-200 space-y-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <h3 class="text-xl font-bold text-slate-900">🩺 Phiếu Khám & Kê Đơn: <span id="patientNameLabel" class="text-blue-600">Bệnh Nhân</span></h3>
+                <h3 class="text-xl font-title font-bold text-slate-900">🩺 Lập Phiếu Khám & Kê Đơn: <span id="patientNameLabel" class="text-sky-600">Bệnh Nhân</span></h3>
                 <button onclick="closeExamModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
             </div>
 
@@ -119,28 +113,28 @@
                 <input type="hidden" id="apptIdInput">
 
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 uppercase">Triệu chứng lâm sàng</label>
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Triệu chứng lâm sàng ghi nhận</label>
                     <textarea id="symptomsInput" rows="2" required
-                              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none" placeholder="Ví dụ: Đau họng, sốt nhẹ..."></textarea>
+                              class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Đau rát họng, ho khạc đờm trắng, sốt nhẹ..."></textarea>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 uppercase">Chẩn đoán kết luận</label>
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chẩn đoán kết luận y khoa</label>
                     <input type="text" id="diagnosisInput" required
-                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none" placeholder="Ví dụ: Viêm họng cấp">
+                           class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Viêm họng cấp / Viêm phế quản">
                 </div>
 
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 uppercase">Lời dặn bác sĩ</label>
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Lời dặn & Hướng dẫn điều trị</label>
                     <textarea id="adviceInput" rows="2"
-                              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none" placeholder="Ví dụ: Nghỉ ngơi, uống nhiều nước..."></textarea>
+                              class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Uống nhiều nước ấm, súc họng nước muối ấm, nghỉ ngơi hợp lý..."></textarea>
                 </div>
 
                 <!-- Prescription Section -->
                 <div class="space-y-3 pt-2">
-                    <div class="flex justify-between items-center">
-                        <h4 class="text-sm font-bold text-slate-900">💊 Toa Thuốc Cho Bệnh Nhân</h4>
-                        <button type="button" onclick="addMedicineRow()" class="bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold py-1.5 px-3 rounded-lg border border-blue-200">+ Thêm thuốc</button>
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                        <h4 class="text-sm font-bold text-slate-900">💊 Toa Thuốc Chỉ Định</h4>
+                        <button type="button" onclick="addMedicineRow()" class="bg-sky-50 hover:bg-sky-100 text-sky-600 text-xs font-bold py-1.5 px-3 rounded-lg border border-sky-200">+ Thêm thuốc chỉ định</button>
                     </div>
 
                     <div id="prescriptionRows" class="space-y-3">
@@ -148,9 +142,11 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow shadow-emerald-500/20 text-sm">
-                    💾 Lưu Bệnh Án & Chuyển Toa Sang Chờ Cấp Phát
-                </button>
+                <div class="pt-4 border-t border-slate-100">
+                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm hover:shadow text-sm">
+                        💾 Lưu Bệnh Án & Gửi Đơn Sang Chờ Cấp Phát
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -170,7 +166,9 @@
             document.getElementById('btn-' + tabId).classList.add('bg-slate-800', 'text-white');
         }
 
-        function openExamModal(apptId, patientName) {
+        function openExamModal(btn) {
+            const apptId = btn.getAttribute('data-id');
+            const patientName = btn.getAttribute('data-name');
             document.getElementById('apptIdInput').value = apptId;
             document.getElementById('patientNameLabel').textContent = patientName;
             document.getElementById('prescriptionRows').innerHTML = ''; // reset
@@ -259,13 +257,13 @@
             rows.forEach(row => {
                 const medicineId = row.querySelector('.med-select').value;
                 const quantity = row.querySelector('.med-qty').value;
-                const dosageInstruction = row.querySelector('.med-inst').value;
+                const dosageInstructions = row.querySelector('.med-inst').value;
                 
                 if (medicineId && quantity) {
                     prescriptionItems.push({
                         medicineId: parseInt(medicineId),
                         quantity: parseInt(quantity),
-                        dosageInstruction
+                        dosageInstructions
                     });
                 }
             });
@@ -286,11 +284,22 @@
                     throw new Error('Lỗi lưu kết quả khám bệnh hoặc thiếu thuốc tồn kho.');
                 }
 
-                alert('Ghi nhận bệnh án và toa thuốc thành công! Đơn thuốc đang chờ cấp phát.');
-                location.reload();
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Ghi nhận bệnh án và toa thuốc thành công! Đơn thuốc đang chờ cấp phát.',
+                    icon: 'success',
+                    confirmButtonColor: '#0284c7'
+                }).then(() => {
+                    location.reload();
+                });
 
             } catch (err) {
-                alert(err.message);
+                Swal.fire({
+                    title: 'Lỗi',
+                    text: err.message,
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48'
+                });
             }
         });
 

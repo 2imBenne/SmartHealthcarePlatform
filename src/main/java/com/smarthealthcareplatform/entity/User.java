@@ -17,6 +17,7 @@ public class User {
     private Long id;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private UserProfile profile;
 
     @Column(nullable = false, unique = true, length = 100)

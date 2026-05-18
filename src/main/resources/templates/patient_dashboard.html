@@ -4,60 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Điều Khiển Bệnh Nhân - Smart Healthcare</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter and Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 for beautiful popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Outfit', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
-    <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .sidebar {
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-        }
-    </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800">
+<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800 font-sans">
 
     <!-- Sidebar Menu -->
-    <aside class="w-full md:w-64 sidebar text-slate-300 flex flex-col justify-between p-6">
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-6 border-r border-slate-800">
         <div class="space-y-8">
             <!-- Brand -->
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg">S</div>
-                <span class="text-lg font-bold tracking-tight text-white">Smart<span class="text-blue-500">Care</span></span>
+                <div class="w-9 h-9 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-lg shadow">S</div>
+                <span class="text-lg font-title font-bold tracking-tight text-white">Smart<span class="text-sky-500">Care</span></span>
             </div>
 
             <!-- Navigation Links -->
-            <nav class="space-y-2">
-                <button onclick="switchTab('profileTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-profileTab">
+            <nav class="space-y-1">
+                <button onclick="switchTab('profileTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-profileTab">
                     👤 Hồ Sơ Cá Nhân
                 </button>
-                <button onclick="switchTab('bookingTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-medium text-left text-sm" id="btn-bookingTab">
+                <button onclick="switchTab('bookingTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-slate-400" id="btn-bookingTab">
                     🗓️ Đặt Lịch & Cuộc Hẹn
                 </button>
-                <button onclick="switchTab('historyTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-medium text-left text-sm" id="btn-historyTab">
+                <button onclick="switchTab('historyTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-slate-400" id="btn-historyTab">
                     📋 Lịch Sử Bệnh Án
                 </button>
             </nav>
         </div>
 
         <!-- Logout Button -->
-        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8">
+        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-rose-950/30 hover:bg-rose-900 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8 border border-rose-900/30">
             🚪 Đăng Xuất
         </button>
     </aside>
@@ -66,12 +58,12 @@
     <main class="flex-grow p-6 md:p-10 space-y-8 overflow-y-auto max-w-7xl mx-auto w-full">
         
         <!-- Welcome banner -->
-        <header class="flex justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-600 p-6 md:p-8 rounded-3xl text-white shadow-xl shadow-blue-500/10">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 md:p-8 rounded-xl text-slate-800 shadow-sm">
             <div class="space-y-1">
-                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Xin chào, <span th:text="${profile.fullName}">Bệnh Nhân</span>!</h1>
-                <p class="text-blue-100 text-sm">Chào mừng bạn quay lại hệ thống y tế số thông minh.</p>
+                <h1 class="text-2xl md:text-3xl font-title font-bold tracking-tight text-slate-900">Xin chào, <span th:text="${profile.fullName}" class="text-sky-600">Bệnh Nhân</span>!</h1>
+                <p class="text-slate-500 text-sm">Chào mừng bạn quay lại Hệ thống quản lý Y tế số thông minh.</p>
             </div>
-            <button onclick="openBookingModal()" class="hidden md:block bg-white hover:bg-slate-100 text-blue-600 font-bold py-3 px-6 rounded-2xl shadow-lg transition-all hover:scale-105">
+            <button onclick="openBookingModal()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-sm transition-all hover:shadow text-sm">
                 📅 Đặt lịch khám mới
             </button>
         </header>
@@ -80,46 +72,48 @@
         
         <!-- 1. Profile Tab -->
         <section id="profileTab" class="tab-content space-y-6">
-            <div class="glass p-6 md:p-8 rounded-3xl space-y-6">
-                <div class="flex justify-between items-center border-b border-slate-200 pb-4">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">👤 Thông Tin Hồ Sơ Cá Nhân</h2>
-                    <span class="text-xs bg-emerald-100 text-emerald-700 py-1 px-2.5 rounded-full font-bold">Hoạt động</span>
+            <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">👤 Thông Tin Hồ Sơ Cá Nhân</h2>
+                    <span class="text-xs bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full font-bold border border-emerald-200">Đang hoạt động</span>
                 </div>
 
                 <form id="profileForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Họ và tên</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Họ và tên</label>
                         <input type="text" id="profName" th:value="${profile.fullName}" required
-                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium">
+                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Số điện thoại</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Số điện thoại</label>
                         <input type="text" id="profPhone" th:value="${profile.phoneNumber}" required
-                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium">
+                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Ngày sinh</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Ngày sinh</label>
                         <input type="date" id="profDOB" th:value="${profile.dateOfBirth}"
-                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium">
+                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Giới tính</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Giới tính</label>
                         <select id="profGender"
-                                class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium">
+                                class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
                             <option value="Nam" th:selected="${profile.gender == 'Nam'}">Nam</option>
                             <option value="Nữ" th:selected="${profile.gender == 'Nữ'}">Nữ</option>
                             <option value="Khác" th:selected="${profile.gender == 'Khác'}">Khác</option>
                         </select>
                     </div>
                     <div class="space-y-1 md:col-span-2">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Địa chỉ thường trú</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Địa chỉ thường trú</label>
                         <input type="text" id="profAddress" th:value="${profile.address}"
-                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium">
+                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
                     </div>
                     
-                    <button type="submit" class="w-fit bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition-all">
-                        💾 Lưu thay đổi hồ sơ
-                    </button>
+                    <div class="md:col-span-2 pt-2">
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-sm transition-all text-sm">
+                            💾 Lưu thay đổi hồ sơ
+                        </button>
+                    </div>
                 </form>
             </div>
         </section>
@@ -127,39 +121,40 @@
         <!-- 2. Booking / Current Appointments Tab -->
         <section id="bookingTab" class="tab-content hidden space-y-6">
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">🗓️ Danh Sách Lịch Đã Đặt</h2>
-                <button onclick="openBookingModal()" class="md:hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl shadow">Đặt lịch</button>
+                <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">🗓️ Lịch Hẹn Khám Bệnh Đã Đăng Ký</h2>
+                <button onclick="openBookingModal()" class="md:hidden bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow text-sm">Đặt lịch</button>
             </div>
 
             <div class="grid grid-cols-1 gap-4">
                 <!-- Loop through appointments Thymeleaf -->
-                <div th:each="appt : ${appointments}" class="glass p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-lg transition-all">
-                    <div class="space-y-1.5">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-slate-900" th:text="${appt.doctor.userProfile.fullName}">Bác Sĩ</span>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold" th:text="${appt.doctor.specialty.name}">Chuyên Khoa</span>
+                <div th:each="appt : ${appointments}" class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-sm transition-all">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-sm font-bold text-slate-900" th:text="${appt.doctor.user.profile.fullName}">Bác Sĩ</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-semibold border border-sky-100" th:text="${appt.doctor.specialty.name}">Chuyên Khoa</span>
                         </div>
-                        <p class="text-slate-500 text-xs flex items-center gap-2">
-                            <span>📅 Ngày: <strong class="text-slate-700" th:text="${appt.appointmentDate}">18/05/2026</strong></span>
-                            <span>⏰ Giờ: <strong class="text-slate-700" th:text="${appt.startTime + ' - ' + appt.endTime}">08:00 - 08:30</strong></span>
+                        <p class="text-slate-500 text-xs flex items-center gap-3 flex-wrap">
+                            <span class="flex items-center gap-1">📅 Ngày: <strong class="text-slate-700" th:text="${appt.appointmentDate}">18/05/2026</strong></span>
+                            <span class="flex items-center gap-1">⏰ Giờ: <strong class="text-slate-700" th:text="${appt.startTime + ' - ' + appt.endTime}">08:00 - 08:30</strong></span>
                         </p>
-                        <p class="text-slate-600 text-sm" th:text="${appt.reason != null ? 'Lý do: ' + appt.reason : ''}">Lý do khám</p>
+                        <p class="text-slate-600 text-sm" th:text="${appt.reason != null ? 'Lý do khám: ' + appt.reason : ''}">Lý do khám</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span th:if="${appt.status.name() == 'PENDING'}" class="text-xs bg-amber-100 text-amber-700 py-1 px-3 rounded-full font-bold">Chờ Xác Nhận</span>
-                        <span th:if="${appt.status.name() == 'CONFIRMED'}" class="text-xs bg-blue-100 text-blue-700 py-1 px-3 rounded-full font-bold">Đã Xác Nhận</span>
-                        <span th:if="${appt.status.name() == 'COMPLETED'}" class="text-xs bg-emerald-100 text-emerald-700 py-1 px-3 rounded-full font-bold">Đã Hoàn Thành</span>
+                        <span th:if="${appt.status.name() == 'PENDING'}" class="text-xs bg-amber-50 text-amber-700 py-1 px-3 rounded-full font-bold border border-amber-200">Chờ Xác Nhận</span>
+                        <span th:if="${appt.status.name() == 'CONFIRMED'}" class="text-xs bg-sky-50 text-sky-700 py-1 px-3 rounded-full font-bold border border-sky-200">Đã Xác Nhận</span>
+                        <span th:if="${appt.status.name() == 'COMPLETED'}" class="text-xs bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full font-bold border border-emerald-200">Đã Hoàn Thành</span>
                         
                         <!-- Cancel Button if status is PENDING or CONFIRMED -->
                         <button th:if="${appt.status.name() == 'PENDING' or appt.status.name() == 'CONFIRMED'}"
-                                th:onclick="'cancelAppointment(' + ${appt.id} + ')'"
-                                class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold py-2 px-4 rounded-xl transition-all">
+                                th:data-id="${appt.id}"
+                                onclick="cancelAppointment(this)"
+                                class="bg-white hover:bg-rose-50 text-rose-600 border border-slate-300 hover:border-rose-300 text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm">
                             Hủy Lịch
                         </button>
                     </div>
                 </div>
                 
-                <div th:if="${appointments == null or appointments.isEmpty()}" class="glass p-8 text-center text-slate-500 rounded-3xl">
+                <div th:if="${appointments == null or appointments.isEmpty()}" class="bg-white p-8 text-center text-slate-400 rounded-xl border border-slate-200">
                     Chưa có cuộc hẹn nào được đặt. Hãy bấm "Đặt lịch khám mới" để trải nghiệm dịch vụ.
                 </div>
             </div>
@@ -167,43 +162,43 @@
 
         <!-- 3. Medical History Tab (CORE-07) -->
         <section id="historyTab" class="tab-content hidden space-y-6">
-            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">📋 Lịch Sử Bệnh Án & Toa Thuốc Liên Kết</h2>
+            <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">📋 Lịch Sử Khám Bệnh & Kết Luận Toa Thuốc</h2>
 
             <div class="space-y-6">
                 <!-- Loop through history -->
-                <div th:each="hist : ${history}" class="glass p-6 md:p-8 rounded-3xl space-y-6">
+                <div th:each="hist : ${history}" class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-6">
                     
                     <!-- Card Header -->
-                    <div class="flex justify-between items-start border-b border-slate-200 pb-4">
+                    <div class="flex justify-between items-start border-b border-slate-100 pb-4">
                         <div class="space-y-1">
                             <h3 class="text-lg font-bold text-slate-900" th:text="${'Bác sĩ chẩn đoán: ' + hist.doctorName}">Chẩn đoán bởi Bác Sĩ</h3>
-                            <p class="text-xs text-slate-400" th:text="${'Thời gian khám: ' + hist.visitDate}">Ngày khám</p>
+                            <p class="text-xs text-slate-400" th:text="${'Thời gian khám: ' + hist.appointmentDate}">Ngày khám</p>
                         </div>
-                        <span class="text-xs bg-emerald-100 text-emerald-700 py-1 px-3 rounded-full font-bold">Hoàn Thành Ca</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full font-bold border border-emerald-200">Hoàn Thành Ca</span>
                     </div>
 
                     <!-- Symptoms & Diagnosis -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Triệu Chứng Lâm Sàng</h4>
-                            <p class="text-sm text-slate-700" th:text="${hist.symptoms}">Triệu chứng bệnh</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Triệu Chứng Lâm Sàng</h4>
+                            <p class="text-sm text-slate-700 font-medium" th:text="${hist.symptoms}">Triệu chứng bệnh</p>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Chẩn Đoán Kết Luận</h4>
-                            <p class="text-sm text-slate-700 font-semibold text-blue-700" th:text="${hist.diagnosis}">Chẩn đoán y khoa</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Chẩn Đoán Kết Luận</h4>
+                            <p class="text-sm font-semibold text-sky-700" th:text="${hist.diagnosis}">Chẩn đoán y khoa</p>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50 md:col-span-2">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Lời Khuyên Bác Sĩ</h4>
-                            <p class="text-sm text-slate-700" th:text="${hist.advice}">Dặn dò điều trị</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 md:col-span-2">
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Lời Khuyên & Dặn Dò Điều Trị</h4>
+                            <p class="text-sm text-slate-700 leading-relaxed" th:text="${hist.advice}">Dặn dò điều trị</p>
                         </div>
                     </div>
 
                     <!-- Prescription details mapping -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Đơn Thuốc Được Kê</h4>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left border border-slate-200/50 rounded-2xl overflow-hidden">
-                                <thead class="bg-slate-100 text-xs font-semibold text-slate-500 uppercase">
+                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Đơn Thuốc Được Kê</h4>
+                        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-xs font-semibold text-slate-500 uppercase border-b border-slate-200">
                                     <tr>
                                         <th class="p-3">Tên thuốc</th>
                                         <th class="p-3">Số lượng</th>
@@ -212,11 +207,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="med : ${hist.medicines}" class="border-b border-slate-100 hover:bg-slate-50 transition-all">
-                                        <td class="p-3 font-semibold text-slate-800" th:text="${med.name}">Tên thuốc</td>
+                                    <tr th:each="med : ${hist.medicines}" class="border-b border-slate-100 hover:bg-slate-50/50 transition-all">
+                                        <td class="p-3 font-semibold text-slate-800" th:text="${med.medicineName}">Tên thuốc</td>
                                         <td class="p-3 text-slate-600" th:text="${med.quantity}">0</td>
-                                        <td class="p-3 text-slate-600" th:text="${med.dosageInstruction}">Cách uống</td>
-                                        <td class="p-3 text-right font-bold text-blue-600" th:text="${#numbers.formatDecimal(med.unitPrice, 1, 'DEFAULT', 0, 'DEFAULT') + ' đ'}">0 đ</td>
+                                        <td class="p-3 text-slate-600" th:text="${med.dosageInstructions}">Cách uống</td>
+                                        <td class="p-3 text-right font-bold text-sky-600" th:text="${#numbers.formatDecimal(med.unitPrice, 1, 'DEFAULT', 0, 'DEFAULT') + ' đ'}">0 đ</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -225,61 +220,61 @@
 
                 </div>
 
-                <div th:if="${history == null or history.isEmpty()}" class="glass p-8 text-center text-slate-500 rounded-3xl">
+                <div th:if="${history == null or history.isEmpty()}" class="bg-white p-8 text-center text-slate-400 rounded-xl border border-slate-200">
                     Không tìm thấy lịch sử khám bệnh nào trên tài khoản này.
                 </div>
             </div>
         </section>
-
+        
     </main>
 
     <!-- Booking Modal (CORE-05) -->
-    <div id="bookingModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-lg bg-white p-8 rounded-3xl shadow-2xl space-y-6">
+    <div id="bookingModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-lg bg-white p-8 rounded-xl shadow-2xl border border-slate-200 space-y-6">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <h3 class="text-xl font-bold text-slate-900">🗓️ Đặt Lịch Khám Bệnh Mới</h3>
+                <h3 class="text-xl font-title font-bold text-slate-900">🗓️ Đăng Ký Lịch Hẹn Khám Bệnh Mới</h3>
                 <button onclick="closeBookingModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
             </div>
 
             <form id="bookingForm" class="space-y-4">
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 uppercase">Chọn Chuyên Khoa</label>
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chọn Chuyên Khoa</label>
                     <select id="specialtySelect" required onchange="filterDoctorsBySpecialty()"
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none">
+                            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
                         <option value="">-- Chọn chuyên khoa --</option>
                         <option th:each="spec : ${specialties}" th:value="${spec.id}" th:text="${spec.name}">Chuyên khoa</option>
                     </select>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 uppercase">Chọn Bác Sĩ</label>
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chọn Bác Sĩ Khám</label>
                     <select id="doctorSelect" required
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none">
+                            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
                         <option value="">-- Vui lòng chọn chuyên khoa trước --</option>
                     </select>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Ngày khám</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Ngày khám</label>
                         <input type="date" id="apptDate" required
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none">
+                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 uppercase">Giờ bắt đầu</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Giờ khám bắt đầu</label>
                         <input type="time" id="apptTime" required
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none">
+                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
                     </div>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 uppercase">Lý do khám bệnh</label>
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Triệu chứng/Lý do khám bệnh</label>
                     <textarea id="apptReason" rows="2"
-                              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none" placeholder="Ví dụ: Đau đầu, sốt nhẹ..."></textarea>
+                              class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Đau đầu, ho sốt nhẹ từ tối qua..."></textarea>
                 </div>
 
-                <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow shadow-blue-500/20 text-sm">
-                    🚀 Xác Nhận Đặt Lịch
+                <button type="submit" class="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg shadow-sm text-sm">
+                    🚀 Xác Nhận Đăng Ký Lịch Khám
                 </button>
             </form>
         </div>
@@ -319,8 +314,8 @@
             const filtered = allDoctors.filter(doc => doc.specialty && doc.specialty.id == specId);
             filtered.forEach(doc => {
                 const opt = document.createElement('option');
-                opt.value = doc.id;
-                opt.textContent = doc.userProfile ? doc.userProfile.fullName : 'Bác sĩ';
+                opt.value = doc.userId;
+                opt.textContent = (doc.user && doc.user.profile) ? doc.user.profile.fullName : 'Bác sĩ';
                 docSelect.appendChild(opt);
             });
         }
@@ -360,17 +355,40 @@
                     throw new Error(data.message || 'Lịch khám giờ này của Bác sĩ đã có người đặt, vui lòng chọn giờ khác.');
                 }
 
-                alert('Đặt lịch khám thành công!');
-                location.reload();
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Đặt lịch khám thành công!',
+                    icon: 'success',
+                    confirmButtonColor: '#0284c7'
+                }).then(() => {
+                    location.reload();
+                });
 
             } catch (err) {
-                alert(err.message);
+                Swal.fire({
+                    title: 'Thất bại',
+                    text: err.message,
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48'
+                });
             }
         });
 
         // Hủy lịch (CORE-09)
-        async function cancelAppointment(apptId) {
-            if (!confirm('Bạn có chắc chắn muốn hủy lịch khám này không? Slot giờ khám sẽ lập tức được giải phóng.')) return;
+        async function cancelAppointment(btn) {
+            const apptId = btn.getAttribute('data-id');
+            const result = await Swal.fire({
+                title: 'Xác nhận hủy lịch?',
+                text: "Bạn có chắc chắn muốn hủy lịch khám này không? Slot giờ khám sẽ lập tức được giải phóng.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Đồng ý hủy',
+                cancelButtonText: 'Không, giữ lại'
+            });
+
+            if (!result.isConfirmed) return;
 
             const token = getJwtFromCookie();
 
@@ -386,11 +404,22 @@
                     throw new Error('Không thể hủy lịch khám.');
                 }
 
-                alert('Hủy lịch thành công! Khung giờ đã được mở khóa ngay lập tức.');
-                location.reload();
+                Swal.fire({
+                    title: 'Đã hủy!',
+                    text: 'Hủy lịch thành công! Khung giờ đã được mở khóa ngay lập tức.',
+                    icon: 'success',
+                    confirmButtonColor: '#0284c7'
+                }).then(() => {
+                    location.reload();
+                });
 
             } catch (err) {
-                alert(err.message);
+                Swal.fire({
+                    title: 'Lỗi',
+                    text: err.message,
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48'
+                });
             }
         }
 
@@ -419,11 +448,22 @@
                     throw new Error('Lỗi cập nhật hồ sơ cá nhân.');
                 }
 
-                alert('Cập nhật hồ sơ thành công!');
-                location.reload();
+                Swal.fire({
+                    title: 'Tuyệt vời!',
+                    text: 'Cập nhật hồ sơ thành công!',
+                    icon: 'success',
+                    confirmButtonColor: '#0284c7'
+                }).then(() => {
+                    location.reload();
+                });
 
             } catch (err) {
-                alert(err.message);
+                Swal.fire({
+                    title: 'Lỗi cập nhật',
+                    text: err.message,
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48'
+                });
             }
         });
 

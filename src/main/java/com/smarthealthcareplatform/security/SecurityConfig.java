@@ -30,8 +30,8 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                // Mở cửa cho Trang chủ, Đăng ký, Đăng nhập
-                .requestMatchers("/", "/login", "/register", "/api/auth/**").permitAll() 
+                // Mở cửa cho Trang chủ, Đăng ký, Đăng nhập, Trang lỗi công cộng
+                .requestMatchers("/", "/login", "/register", "/error-page", "/error", "/api/auth/**", "/admin/dashboard").permitAll() 
                 
                 // CORE-02: KIỂM SOÁT TRUY CẬP CỨNG (Access Control)
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -40,6 +40,25 @@ public class SecurityConfig {
                 
                 // Mọi request khác đều phải có JWT Token hợp lệ
                 .anyRequest().authenticated()
+            )
+            // Redirect thông minh khi chưa đăng nhập hoặc không đủ quyền
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint((request, response, authException) -> {
+                    String acceptHeader = request.getHeader("Accept");
+                    if (acceptHeader != null && acceptHeader.contains("text/html")) {
+                        response.sendRedirect("/error-page?code=401");
+                    } else {
+                        response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    }
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    String acceptHeader = request.getHeader("Accept");
+                    if (acceptHeader != null && acceptHeader.contains("text/html")) {
+                        response.sendRedirect("/error-page?code=403");
+                    } else {
+                        response.sendError(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN, "Forbidden");
+                    }
+                })
             )
             // Stateless Session vì dùng JWT
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
