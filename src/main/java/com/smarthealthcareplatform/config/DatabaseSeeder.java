@@ -19,6 +19,7 @@ import java.util.List;
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final SpecialtyRepository specialtyRepository;
+    private final TestTypeRepository testTypeRepository;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final DoctorRepository doctorRepository;
@@ -49,6 +50,20 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
 
         // 2. Tự động Seed Users & UserProfiles nếu hệ thống trống trơn
+        // 1.1 Seed loai xet nghiem lam danh muc nen (CORE-04)
+        if (testTypeRepository.count() == 0) {
+            List<TestType> testTypes = Arrays.asList(
+                    TestType.builder().name("Cong thuc mau").description("Danh gia hong cau, bach cau, tieu cau.").build(),
+                    TestType.builder().name("Sinh hoa mau").description("Danh gia duong huyet, men gan, chuc nang than.").build(),
+                    TestType.builder().name("Nuoc tieu").description("Sang loc nhiem khuan tiet nieu, than va chuyen hoa.").build(),
+                    TestType.builder().name("X-Quang").description("Hinh anh chan doan co xuong, phoi, tim.").build(),
+                    TestType.builder().name("Sieu am").description("Khao sat mo mem, o bung, tim mach va san khoa.").build(),
+                    TestType.builder().name("Dien tim (ECG)").description("Theo doi hoat dong dien hoc cua tim.").build()
+            );
+            testTypeRepository.saveAll(testTypes);
+            System.out.println("Seeded test_types successfully.");
+        }
+
         if (userRepository.count() == 0) {
             String defaultPassword = passwordEncoder.encode("password123");
 

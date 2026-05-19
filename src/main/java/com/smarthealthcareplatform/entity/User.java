@@ -34,6 +34,12 @@ public class User {
     @Column(nullable = false)
     private Boolean isActive = true;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer failedLoginAttempts = 0;
+
+    private LocalDateTime accountLockedUntil;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

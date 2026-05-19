@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Trị — Smart Healthcare</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -37,7 +37,7 @@
             <h2 class="card-title">👥 Danh Sách Người Dùng</h2>
             <div style="display:flex;gap:8px;align-items:center">
                 <input type="text" id="userSearchInput" placeholder="🔍 Tìm theo tên hoặc email..." onkeyup="filterUsers()"
-                    style="padding:8px 14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;width:260px">
+                    style="padding:8px 14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;font-family:'Be Vietnam Pro',sans-serif;outline:none;width:260px">
             </div>
         </div>
         <div class="card" style="padding:0;overflow:hidden">
@@ -58,15 +58,22 @@
                         </td>
                         <td>
                             <span th:if="${u.isActive == true}" class="badge badge-green">Hoạt động</span>
-                            <span th:if="${u.isActive != true}" class="badge badge-red">Đã khóa</span>
+                            <span th:if="${u.isActive != true && u.role != 'DOCTOR'}" class="badge badge-red">Đã khóa</span>
+                            <span th:if="${u.isActive != true && u.role == 'DOCTOR'}" class="badge" style="background:rgba(249,115,22,0.12);color:#f97316;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px">Chờ duyệt ⏳</span>
                         </td>
                         <td style="text-align:center">
                             <div th:if="${u.role != 'ADMIN'}" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+                                <!-- Nút Phê Duyệt dành riêng cho Bác Sĩ chưa kích hoạt -->
+                                <button th:if="${u.role == 'DOCTOR' && u.isActive != true}"
+                                    th:data-id="${u.id}" th:data-name="${u.fullName}"
+                                    onclick="approveDoctorModal(this)" class="btn-ghost btn-sm"
+                                    style="background:rgba(16,185,129,0.12);color:#10b981;font-weight:700;border:1px solid rgba(16,185,129,0.2)">⚡ Duyệt</button>
+
                                 <button th:data-id="${u.id}" th:data-active="${u.isActive}"
                                     onclick="toggleUserActive(this)" class="btn-ghost btn-sm"
                                     th:text="${u.isActive == true ? '🔒 Khóa' : '🔓 Mở'}">Khóa</button>
                                 <button th:data-id="${u.id}" th:data-role="${u.role}"
-                                    onclick="changeUserRole(this)" class="btn-ghost btn-sm">🔄 Đổi Role</button>
+                                    onclick="changeUserRole(this)" class="btn-ghost btn-sm">🔄 Đổi vai trò</button>
                                 <button th:data-id="${u.id}" th:data-name="${u.fullName}"
                                     onclick="deleteUser(this)" class="btn-danger btn-sm">🗑️ Xóa</button>
                             </div>
@@ -178,7 +185,10 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const specialties = /*[[${specialties}]]*/ [];
+    /*]]>*/
     const swalCfg = {confirmButtonColor:'rgb(6,182,212)'};
 
     function switchTab(tabId) {
@@ -208,7 +218,7 @@
         if (!r.isConfirmed) return;
         try {
             const res = await fetch('/api/admin/users/'+id+'/toggle-active',
-                {method:'PUT', headers:{'Authorization':'Bearer '+getJwt()}});
+                {method:'PUT'});
             if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
             Swal.fire({title:'Thành công!', icon:'success', timer:1200, showConfirmButton:false, ...swalCfg})
                 .then(() => location.reload());
@@ -219,14 +229,16 @@
         const id = btn.getAttribute('data-id');
         const current = btn.getAttribute('data-role');
         const newRole = current === 'PATIENT' ? 'DOCTOR' : 'PATIENT';
+        const currentVi = current === 'PATIENT' ? 'Bệnh Nhân' : (current === 'DOCTOR' ? 'Bác Sĩ' : 'Admin');
+        const newRoleVi = newRole === 'PATIENT' ? 'Bệnh Nhân' : 'Bác Sĩ';
         const r = await Swal.fire({
             title: 'Đổi vai trò?',
-            html: `Chuyển từ <b>${current}</b> → <b>${newRole}</b>`,
+            html: `Chuyển từ <b>${currentVi}</b> → <b>${newRoleVi}</b>`,
             icon:'question', showCancelButton:true, confirmButtonText:'Đồng ý', cancelButtonText:'Hủy', ...swalCfg});
         if (!r.isConfirmed) return;
         try {
             const res = await fetch('/api/admin/users/'+id+'/role', {method:'PUT',
-                headers:{'Content-Type':'application/json','Authorization':'Bearer '+getJwt()},
+                headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({role: newRole})});
             if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
             Swal.fire({title:'Thành công!', icon:'success', timer:1200, showConfirmButton:false, ...swalCfg})
@@ -242,11 +254,84 @@
             cancelButtonColor:'#475569', confirmButtonText:'Xóa vĩnh viễn', cancelButtonText:'Hủy', ...swalCfg});
         if (!r.isConfirmed) return;
         try {
-            const res = await fetch('/api/admin/users/'+id, {method:'DELETE', headers:{'Authorization':'Bearer '+getJwt()}});
+            const res = await fetch('/api/admin/users/'+id, {method:'DELETE'});
             if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
             Swal.fire({title:'Đã xóa!', icon:'success', timer:1200, showConfirmButton:false, ...swalCfg})
                 .then(() => location.reload());
         } catch(e) { Swal.fire({title:'Lỗi', text:e.message, icon:'error', ...swalCfg}); }
+    }
+
+    async function approveDoctorModal(btn) {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        
+        let specialtyOptions = specialties.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+        const { value: formValues } = await Swal.fire({
+            title: '⚡ Phê Duyệt Bác Sĩ',
+            html: `
+                <div style="text-align:left; font-family:'Be Vietnam Pro',sans-serif;">
+                    <p style="margin-bottom:14px; font-size:13px; color:var(--muted);">Nhập thông số lâm sàng để kích hoạt hoạt động cho bác sĩ: <b>${name}</b></p>
+                    
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block; font-size:11px; font-weight:600; margin-bottom:4px; color:var(--muted);">CHUYÊN KHOA LÂM SÀNG</label>
+                        <select id="approve-specialty" class="swal2-input" style="width:100%; margin:0; padding:10px; font-size:13px; height:auto; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text)">
+                            ${specialtyOptions}
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block; font-size:11px; font-weight:600; margin-bottom:4px; color:var(--muted);">SỐ NĂM KINH NGHIỆM</label>
+                        <input id="approve-exp" type="number" class="swal2-input" value="5" min="1" max="60" style="width:100%; margin:0; padding:10px; font-size:13px; height:auto; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text)">
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block; font-size:11px; font-weight:600; margin-bottom:4px; color:var(--muted);">HỌC HÀM / HỌC VỊ</label>
+                        <input id="approve-qualifications" type="text" class="swal2-input" value="Bác sĩ chuyên khoa" style="width:100%; margin:0; padding:10px; font-size:13px; height:auto; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text)">
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block; font-size:11px; font-weight:600; margin-bottom:4px; color:var(--muted);">GIÁ KHÁM BỆNH (VNĐ)</label>
+                        <input id="approve-fee" type="number" class="swal2-input" value="150000" min="50000" step="10000" style="width:100%; margin:0; padding:10px; font-size:13px; height:auto; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text)">
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: '⚡ Duyệt & Kích Hoạt',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#10b981',
+            preConfirm: () => {
+                return {
+                    specialtyId: document.getElementById('approve-specialty').value,
+                    experienceYears: document.getElementById('approve-exp').value,
+                    qualifications: document.getElementById('approve-qualifications').value,
+                    consultationFee: document.getElementById('approve-fee').value
+                }
+            },
+            ...swalCfg
+        });
+
+        if (formValues) {
+            try {
+                const res = await fetch(`/api/admin/users/${id}/approve-doctor`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formValues)
+                });
+                if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: 'Tài khoản Bác sĩ đã được kích hoạt hoạt động.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    ...swalCfg
+                }).then(() => location.reload());
+            } catch(e) {
+                Swal.fire({ title: 'Thất bại', text: e.message, icon: 'error', ...swalCfg });
+            }
+        }
     }
 
     // ======================== MEDICINE MANAGEMENT ========================
@@ -274,7 +359,7 @@
         const url = id ? '/api/admin/medicines/' + id : '/api/admin/medicines';
         try {
             const res = await fetch(url, {method,
-                headers:{'Content-Type':'application/json','Authorization':'Bearer '+getJwt()},
+                headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
                     name: document.getElementById('medName').value,
                     unit: document.getElementById('medUnit').value,
@@ -293,7 +378,7 @@
             confirmButtonText:'Đồng ý',cancelButtonText:'Hủy',...swalCfg});
         if (!r.isConfirmed) return;
         try {
-            const res = await fetch('/api/admin/medicines/'+id, {method:'DELETE',headers:{'Authorization':'Bearer '+getJwt()}});
+            const res = await fetch('/api/admin/medicines/'+id, {method:'DELETE'});
             if (!res.ok) throw new Error('Lỗi xóa.');
             Swal.fire({title:'Đã ngừng bán!',icon:'success',timer:1200,showConfirmButton:false,...swalCfg}).then(() => location.reload());
         } catch(e) { Swal.fire({title:'Lỗi',text:e.message,icon:'error',...swalCfg}); }
@@ -305,19 +390,19 @@
             icon:'question',showCancelButton:true,confirmButtonText:'Cấp phát',cancelButtonText:'Hủy',...swalCfg});
         if (!r.isConfirmed) return;
         try {
-            const res = await fetch('/api/admin/medicines/prescriptions/'+id+'/dispense',
-                {method:'POST',headers:{'Authorization':'Bearer '+getJwt()}});
+            const res = await fetch('/api/pharmacy/prescriptions/'+id+'/dispense',
+                {method:'POST'});
             if (!res.ok) throw new Error('Tồn kho không đủ, giao dịch đã rollback.');
             Swal.fire({title:'Cấp phát thành công!',text:'Kho đã trừ lùi an toàn.',icon:'success',timer:1500,showConfirmButton:false,...swalCfg}).then(() => location.reload());
         } catch(e) { Swal.fire({title:'Thất bại',text:e.message,icon:'error',...swalCfg}); }
     }
 
     // ======================== UTILS ========================
-    function getJwt() {
-        const v = `; ${document.cookie}`; const p = v.split(`; jwt=`);
-        if (p.length === 2) return p.pop().split(';').shift(); return '';
+    async function logout() {
+        await fetch('/api/auth/logout', { method:'POST' });
+        window.location.href = '/login';
     }
-    function logout() { document.cookie = "jwt=; path=/; max-age=0"; window.location.href = '/login'; }
 </script>
 </body>
 </html>
+

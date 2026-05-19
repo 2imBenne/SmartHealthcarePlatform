@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập — Smart Healthcare</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <title>Đăng Nhập - Smart Healthcare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Inter',sans-serif;background:#f0fdfa;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-        .login-card{width:100%;max-width:420px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:40px 36px;
-            box-shadow:0 10px 40px rgba(0,0,0,.06)}
+        body{font-family:'Be Vietnam Pro',sans-serif;background:#f0fdfa;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        .login-card{width:100%;max-width:420px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:40px 36px;box-shadow:0 10px 40px rgba(0,0,0,.06)}
         .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px}
-        .logo-ic{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#8b5cf6);
-            display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;color:#fff;
-            box-shadow:0 4px 12px rgba(6,182,212,.25)}
-        .logo-tx{font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;color:#0f172a}
+        .logo-ic{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#8b5cf6);display:flex;align-items:center;justify-content:center;font-family:'Be Vietnam Pro',sans-serif;font-weight:800;font-size:18px;color:#fff;box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .logo-tx{font-family:'Be Vietnam Pro',sans-serif;font-weight:700;font-size:18px;color:#0f172a}
         .logo-tx span{color:#06b6d4}
-        h1{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;text-align:center;margin-bottom:6px;color:#0f172a}
+        h1{font-family:'Be Vietnam Pro',sans-serif;font-size:22px;font-weight:800;text-align:center;margin-bottom:6px;color:#0f172a}
         .sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:28px}
         .form-group{margin-bottom:18px}
         .form-label{display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-        .form-input{width:100%;padding:11px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;
-            font-size:14px;color:#0f172a;outline:none;transition:all .2s;font-family:'Inter',sans-serif}
+        .form-input{width:100%;padding:11px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;color:#0f172a;outline:none;transition:all .2s;font-family:'Be Vietnam Pro',sans-serif}
         .form-input:focus{border-color:#06b6d4;box-shadow:0 0 0 3px rgba(6,182,212,.1)}
         .form-input::placeholder{color:#94a3b8}
-        .btn-submit{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;
-            background:linear-gradient(135deg,#0891b2,#06b6d4);cursor:pointer;transition:all .2s;margin-top:8px;
-            box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .password-wrap{position:relative}
+        .password-wrap .form-input{padding-right:44px}
+        .toggle-pass{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748b}
+        .toggle-pass:hover{color:#0f172a}
+        .toggle-pass svg{width:18px;height:18px;display:block}
+        .btn-submit{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,#0891b2,#06b6d4);cursor:pointer;transition:all .2s;margin-top:8px;box-shadow:0 4px 12px rgba(6,182,212,.25)}
         .btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(6,182,212,.35)}
         .link-row{text-align:center;margin-top:20px;font-size:13px;color:#64748b}
         .link-row a{color:#06b6d4;text-decoration:none;font-weight:600}
@@ -47,7 +46,15 @@
         </div>
         <div class="form-group">
             <label class="form-label">Mật khẩu</label>
-            <input type="password" id="password" required class="form-input" placeholder="••••••••">
+            <div class="password-wrap">
+                <input type="password" id="password" required class="form-input" placeholder="••••••••">
+                <button type="button" class="toggle-pass" data-target="password" aria-label="Hiện/ẩn mật khẩu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
         </div>
         <button type="submit" class="btn-submit">Đăng Nhập →</button>
     </form>
@@ -55,6 +62,30 @@
 </div>
 
 <script>
+    document.querySelectorAll('.toggle-pass').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const input = document.getElementById(btn.getAttribute('data-target'));
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                `;
+            } else {
+                input.type = 'password';
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                `;
+            }
+        });
+    });
+
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         try {
@@ -64,7 +95,6 @@
             });
             if (!res.ok) { const d = await res.json(); throw new Error(d.message || 'Sai email hoặc mật khẩu.'); }
             const data = await res.json();
-            document.cookie = `jwt=${data.token}; path=/; max-age=36000`;
             const role = data.role;
             if (role === 'ADMIN' || role === 'ROLE_ADMIN') window.location.href = '/admin/dashboard';
             else if (role === 'DOCTOR' || role === 'ROLE_DOCTOR') window.location.href = '/doctor/dashboard';

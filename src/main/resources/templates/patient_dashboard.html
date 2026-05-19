@@ -51,7 +51,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Ngày sinh</label>
-                    <input type="date" id="profDOB" th:value="${profile.dateOfBirth}" class="form-input">
+                    <input type="date" id="profDOB" th:value="${profile.dateOfBirth}" class="form-input" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Giới tính</label>
@@ -218,10 +218,9 @@
         let endMin = parseInt(minutes) + 30, endHr = parseInt(hours);
         if (endMin >= 60) { endMin -= 60; endHr += 1; }
         const endTime = `${String(endHr).padStart(2,'0')}:${String(endMin).padStart(2,'0')}:00`;
-        const token = getJwtFromCookie();
         try {
             const res = await fetch('/api/patient/appointments', {
-                method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                method:'POST', headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({doctorId, appointmentDate, startTime, endTime, reason})
             });
             if (!res.ok) { const d = await res.json(); throw new Error(d.message || 'Khung giờ đã có người đặt.'); }
@@ -237,9 +236,8 @@
             icon:'warning',showCancelButton:true,confirmButtonColor:'rgb(239,68,68)',cancelButtonColor:'#94a3b8',
             confirmButtonText:'Đồng ý hủy',cancelButtonText:'Giữ lại'});
         if (!r.isConfirmed) return;
-        const token = getJwtFromCookie();
         try {
-            const res = await fetch('/api/patient/appointments/'+apptId, {method:'DELETE',headers:{'Authorization':'Bearer '+token}});
+            const res = await fetch('/api/patient/appointments/'+apptId, {method:'DELETE'});
             if (!res.ok) throw new Error('Không thể hủy.');
             Swal.fire({title:'Đã hủy!',icon:'success',confirmButtonColor:'rgb(6,182,212)'}).then(() => location.reload());
         } catch(err) {
@@ -249,10 +247,9 @@
 
     document.getElementById('profileForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const token = getJwtFromCookie();
         try {
             const res = await fetch('/api/profile', {method:'PUT',
-                headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
                     fullName: document.getElementById('profName').value,
                     phoneNumber: document.getElementById('profPhone').value,
@@ -268,13 +265,11 @@
         }
     });
 
-    function getJwtFromCookie() {
-        const v = `; ${document.cookie}`;
-        const p = v.split(`; jwt=`);
-        if (p.length === 2) return p.pop().split(';').shift();
-        return '';
+    async function logout() {
+        await fetch('/api/auth/logout', { method:'POST' });
+        window.location.href = '/login';
     }
-    function logout() { document.cookie = "jwt=; path=/; max-age=0"; window.location.href = '/login'; }
 </script>
 </body>
 </html>
+

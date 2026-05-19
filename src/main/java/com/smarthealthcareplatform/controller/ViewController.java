@@ -22,17 +22,52 @@ public class ViewController {
     private final PatientService patientService;
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            boolean anonymous = authentication.getAuthorities().stream()
+                    .anyMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()));
+            if (!anonymous) {
+                String email = authentication.getName();
+                try {
+                    User user = dashboardService.getUserByEmail(email);
+                    model.addAttribute("currentUser", user);
+                    
+                    String fullName = user.getEmail();
+                    if (user.getProfile() != null && user.getProfile().getFullName() != null) {
+                        fullName = user.getProfile().getFullName();
+                    }
+                    model.addAttribute("userFullName", fullName);
+                    
+                    String dashboardUrl = "/patient/dashboard";
+                    if (authentication.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()))) {
+                        dashboardUrl = "/admin/dashboard";
+                    } else if (authentication.getAuthorities().stream().anyMatch(a -> "ROLE_DOCTOR".equals(a.getAuthority()))) {
+                        dashboardUrl = "/doctor/dashboard";
+                    }
+                    model.addAttribute("dashboardUrl", dashboardUrl);
+                } catch (Exception e) {
+                    // Bỏ qua nếu không tải được profile
+                }
+            }
+        }
         return "index";
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Authentication authentication) {
+        String redirect = resolveDashboardRedirect(authentication);
+        if (redirect != null) {
+            return redirect;
+        }
         return "login";
     }
 
     @GetMapping("/register")
-    public String register() {
+    public String register(Authentication authentication) {
+        String redirect = resolveDashboardRedirect(authentication);
+        if (redirect != null) {
+            return redirect;
+        }
         return "register";
     }
 
@@ -63,6 +98,7 @@ public class ViewController {
         model.addAttribute("pendingAppointments", dashboardService.getAppointmentsByDoctorAndStatus(doctor.getUserId(), AppointmentStatus.PENDING));
         model.addAttribute("confirmedAppointments", dashboardService.getAppointmentsByDoctorAndStatus(doctor.getUserId(), AppointmentStatus.CONFIRMED));
         model.addAttribute("medicines", dashboardService.getAllMedicines());
+        model.addAttribute("pendingPrescriptions", dashboardService.getPendingPrescriptions());
 
         return "doctor_dashboard";
     }
@@ -73,6 +109,7 @@ public class ViewController {
         model.addAttribute("medicines", dashboardService.getAllMedicines());
         model.addAttribute("prescriptions", dashboardService.getPendingPrescriptions());
         model.addAttribute("users", dashboardService.getAllUsersForAdmin());
+        model.addAttribute("specialties", dashboardService.getAllSpecialties());
         return "admin_dashboard";
     }
 
@@ -80,5 +117,26 @@ public class ViewController {
     public String errorPage(@org.springframework.web.bind.annotation.RequestParam(value = "code", required = false, defaultValue = "404") String code, Model model) {
         model.addAttribute("errorCode", code);
         return "error";
+    }
+
+    private String resolveDashboardRedirect(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        boolean anonymous = authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()));
+        if (anonymous) {
+            return null;
+        }
+        if (authentication.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()))) {
+            return "redirect:/admin/dashboard";
+        }
+        if (authentication.getAuthorities().stream().anyMatch(a -> "ROLE_DOCTOR".equals(a.getAuthority()))) {
+            return "redirect:/doctor/dashboard";
+        }
+        if (authentication.getAuthorities().stream().anyMatch(a -> "ROLE_PATIENT".equals(a.getAuthority()))) {
+            return "redirect:/patient/dashboard";
+        }
+        return null;
     }
 }

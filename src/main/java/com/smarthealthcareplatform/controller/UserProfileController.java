@@ -10,7 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -20,30 +24,30 @@ public class UserProfileController {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
 
-    // CORE-03: Bệnh nhân/Bác sĩ xem hồ sơ cá nhân — BUG-07 FIX: trả DTO
     @GetMapping
     @PreAuthorize("hasRole('PATIENT') or hasRole('DOCTOR')")
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay nguoi dung"));
 
         UserProfile profile = userProfileRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ cá nhân"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay ho so ca nhan"));
 
         return ResponseEntity.ok(mapToResponse(profile));
     }
 
-    // CORE-03: Cập nhật hồ sơ cá nhân — BUG-07 FIX: trả DTO
     @PutMapping
     @PreAuthorize("hasRole('PATIENT') or hasRole('DOCTOR')")
-    public ResponseEntity<UserProfileResponse> updateProfile(@RequestBody UserProfileRequest request, Authentication authentication) {
+    public ResponseEntity<UserProfileResponse> updateProfile(
+            @jakarta.validation.Valid @RequestBody UserProfileRequest request,
+            Authentication authentication) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay nguoi dung"));
 
         UserProfile profile = userProfileRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ cá nhân"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay ho so ca nhan"));
 
         profile.setFullName(request.getFullName());
         profile.setDateOfBirth(request.getDateOfBirth());
@@ -54,7 +58,6 @@ public class UserProfileController {
         return ResponseEntity.ok(mapToResponse(userProfileRepository.save(profile)));
     }
 
-    // BUG-07 FIX: Mapper Entity → DTO
     private UserProfileResponse mapToResponse(UserProfile p) {
         return UserProfileResponse.builder()
                 .userId(p.getUserId())

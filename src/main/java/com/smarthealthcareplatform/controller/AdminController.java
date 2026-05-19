@@ -43,6 +43,16 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateUserRole(id, newRole));
     }
 
+    // Phê duyệt tài khoản Bác sĩ
+    @PutMapping("/{id}/approve-doctor")
+    public ResponseEntity<UserResponse> approveDoctor(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        Long specialtyId = Long.valueOf(body.get("specialtyId").toString());
+        Integer experienceYears = Integer.valueOf(body.get("experienceYears").toString());
+        String qualifications = body.get("qualifications").toString();
+        java.math.BigDecimal consultationFee = new java.math.BigDecimal(body.get("consultationFee").toString());
+        return ResponseEntity.ok(adminService.approveDoctor(id, specialtyId, experienceYears, qualifications, consultationFee));
+    }
+
     // Xóa người dùng
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {

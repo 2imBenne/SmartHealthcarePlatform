@@ -2,60 +2,52 @@ package com.smarthealthcareplatform.controller;
 
 import com.smarthealthcareplatform.dto.MedicineRequest;
 import com.smarthealthcareplatform.dto.MedicineResponse;
-import com.smarthealthcareplatform.service.MedicalService;
 import com.smarthealthcareplatform.service.MedicineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/medicines")
 @RequiredArgsConstructor
-// Bảo vệ toàn bộ class này, chỉ Admin mới được phép gọi API (CORE-02 & CORE-04)
-@PreAuthorize("hasRole('ADMIN')") 
+@PreAuthorize("hasRole('ADMIN')")
 public class MedicineController {
 
     private final MedicineService medicineService;
-    private final MedicalService medicalService;
 
-    // Thêm / Tạo mới — BUG-06 FIX: trả DTO thay vì Entity
     @PostMapping
     public ResponseEntity<MedicineResponse> createMedicine(@jakarta.validation.Valid @RequestBody MedicineRequest request) {
         return ResponseEntity.ok(medicineService.createMedicine(request));
     }
 
-    // Xem danh sách — BUG-06 FIX: trả DTO thay vì Entity
     @GetMapping
     public ResponseEntity<List<MedicineResponse>> getAllMedicines() {
         return ResponseEntity.ok(medicineService.getAllMedicines());
     }
 
-    // Xem chi tiết 1 thuốc — BUG-06 FIX: trả DTO thay vì Entity
     @GetMapping("/{id}")
     public ResponseEntity<MedicineResponse> getMedicineById(@PathVariable Long id) {
         return ResponseEntity.ok(medicineService.getMedicineById(id));
     }
 
-    // Sửa — BUG-06 FIX: trả DTO thay vì Entity
     @PutMapping("/{id}")
     public ResponseEntity<MedicineResponse> updateMedicine(@PathVariable Long id, @jakarta.validation.Valid @RequestBody MedicineRequest request) {
         return ResponseEntity.ok(medicineService.updateMedicine(id, request));
     }
 
-    // Xóa (Xóa mềm)
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMedicine(@PathVariable Long id) {
         medicineService.deleteMedicine(id);
-        return ResponseEntity.ok("Đã chuyển thuốc vào trạng thái Ngừng Bán (Xóa mềm).");
-    }
-
-    // CORE-08: Admin / Dược sĩ xác nhận phát thuốc
-    @PostMapping("/prescriptions/{prescriptionId}/dispense")
-    public ResponseEntity<String> dispensePrescription(@PathVariable Long prescriptionId) {
-        medicalService.dispensePrescription(prescriptionId);
-        return ResponseEntity.ok("Cấp phát thuốc thành công, đã trừ tồn kho (Pessimistic Lock applied).");
+        return ResponseEntity.ok("Da chuyen thuoc vao trang thai Ngung Ban (Xoa mem).");
     }
 }
