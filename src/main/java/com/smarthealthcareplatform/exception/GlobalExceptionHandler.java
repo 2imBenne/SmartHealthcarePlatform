@@ -41,4 +41,16 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    // BUG-10 FIX: Bắt lỗi validation từ @Valid
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        Map<String, String> response = new HashMap<>();
+        String firstError = ex.getBindingResult().getFieldErrors().stream()
+                .map(e -> e.getDefaultMessage())
+                .findFirst()
+                .orElse("Dữ liệu không hợp lệ!");
+        response.put("message", firstError);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }

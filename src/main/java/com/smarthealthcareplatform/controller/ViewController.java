@@ -1,6 +1,7 @@
 package com.smarthealthcareplatform.controller;
 
-
+import com.smarthealthcareplatform.entity.*;
+import com.smarthealthcareplatform.service.DashboardService;
 import com.smarthealthcareplatform.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,17 +10,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * BUG-05 FIX: Controller chỉ gọi Service, KHÔNG inject Repository trực tiếp.
+ * Tuân thủ mô hình 3 lớp: Controller → Service → Repository.
+ */
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
 
-    private final com.smarthealthcareplatform.repository.UserRepository userRepository;
-    private final com.smarthealthcareplatform.repository.UserProfileRepository userProfileRepository;
-    private final com.smarthealthcareplatform.repository.DoctorRepository doctorRepository;
-    private final com.smarthealthcareplatform.repository.SpecialtyRepository specialtyRepository;
-    private final com.smarthealthcareplatform.repository.AppointmentRepository appointmentRepository;
-    private final com.smarthealthcareplatform.repository.MedicineRepository medicineRepository;
-    private final com.smarthealthcareplatform.repository.PrescriptionRepository prescriptionRepository;
+    private final DashboardService dashboardService;
     private final PatientService patientService;
 
     @GetMapping("/")
@@ -41,45 +40,13 @@ public class ViewController {
     @PreAuthorize("hasRole('PATIENT')")
     public String patientDashboard(Model model, Authentication authentication) {
         String email = authentication.getName();
-        com.smarthealthcareplatform.entity.User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        com.smarthealthcareplatform.entity.UserProfile profile = userProfileRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        User user = dashboardService.getUserByEmail(email);
+        UserProfile profile = dashboardService.getProfileByUserId(user.getId());
 
         model.addAttribute("profile", profile);
-        model.addAttribute("appointments", appointmentRepository.findByPatientId(user.getId()));
-        // Map danh sách bác sĩ sang một đối tượng DTO đơn giản để tránh lỗi Serialization (Infinite Recursion/Proxy)
-        java.util.List<java.util.Map<String, Object>> doctorDTOs = doctorRepository.findAll().stream().map(doc -> {
-            java.util.Map<String, Object> map = new java.util.HashMap<>();
-            map.put("userId", doc.getUserId());
-            
-            // Xử lý null-safe cho tên bác sĩ
-            String docName = "Bác sĩ";
-            if (doc.getUser() != null && doc.getUser().getProfile() != null) {
-                docName = doc.getUser().getProfile().getFullName();
-            }
-            
-            java.util.Map<String, Object> specialtyMap = new java.util.HashMap<>();
-            if (doc.getSpecialty() != null) {
-                specialtyMap.put("id", doc.getSpecialty().getId());
-                specialtyMap.put("name", doc.getSpecialty().getName());
-            }
-            
-            // Tạo cấu trúc tương tự để frontend Javascript không bị lỗi
-            java.util.Map<String, Object> userMap = new java.util.HashMap<>();
-            java.util.Map<String, Object> profileMap = new java.util.HashMap<>();
-            profileMap.put("fullName", docName);
-            userMap.put("profile", profileMap);
-            
-            map.put("specialty", specialtyMap);
-            map.put("user", userMap);
-            
-            return map;
-        }).collect(java.util.stream.Collectors.toList());
-
-        model.addAttribute("doctors", doctorDTOs);
-        model.addAttribute("specialties", specialtyRepository.findAll());
+        model.addAttribute("appointments", dashboardService.getPatientAppointments(user.getId()));
+        model.addAttribute("doctors", dashboardService.getDoctorsAsDTO());
+        model.addAttribute("specialties", dashboardService.getAllSpecialties());
         model.addAttribute("history", patientService.getPatientHistory(user.getId()));
 
         return "patient_dashboard";
@@ -89,25 +56,23 @@ public class ViewController {
     @PreAuthorize("hasRole('DOCTOR')")
     public String doctorDashboard(Model model, Authentication authentication) {
         String email = authentication.getName();
-        com.smarthealthcareplatform.entity.User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        com.smarthealthcareplatform.entity.Doctor doctor = doctorRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        User user = dashboardService.getUserByEmail(email);
+        Doctor doctor = dashboardService.getDoctorByUserId(user.getId());
 
         model.addAttribute("doctor", doctor);
-        model.addAttribute("pendingAppointments", appointmentRepository.findByDoctorUserIdAndStatus(doctor.getUserId(), com.smarthealthcareplatform.entity.AppointmentStatus.PENDING));
-        model.addAttribute("confirmedAppointments", appointmentRepository.findByDoctorUserIdAndStatus(doctor.getUserId(), com.smarthealthcareplatform.entity.AppointmentStatus.CONFIRMED));
-        model.addAttribute("medicines", medicineRepository.findAll());
+        model.addAttribute("pendingAppointments", dashboardService.getAppointmentsByDoctorAndStatus(doctor.getUserId(), AppointmentStatus.PENDING));
+        model.addAttribute("confirmedAppointments", dashboardService.getAppointmentsByDoctorAndStatus(doctor.getUserId(), AppointmentStatus.CONFIRMED));
+        model.addAttribute("medicines", dashboardService.getAllMedicines());
 
         return "doctor_dashboard";
     }
 
     @GetMapping("/admin/dashboard")
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public String adminDashboard(Model model) {
-        model.addAttribute("medicines", medicineRepository.findAll());
-        model.addAttribute("prescriptions", prescriptionRepository.findByStatusWithAllDetails(com.smarthealthcareplatform.entity.PrescriptionStatus.PENDING));
+        model.addAttribute("medicines", dashboardService.getAllMedicines());
+        model.addAttribute("prescriptions", dashboardService.getPendingPrescriptions());
+        model.addAttribute("users", dashboardService.getAllUsersForAdmin());
         return "admin_dashboard";
     }
 

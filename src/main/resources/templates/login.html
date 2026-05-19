@@ -3,136 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập - Smart Healthcare</title>
-    <!-- Google Fonts: Inter and Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert2 for beautiful popups -->
+    <title>Đăng Nhập — Smart Healthcare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        title: ['Outfit', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter',sans-serif;background:#f0fdfa;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        .login-card{width:100%;max-width:420px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:40px 36px;
+            box-shadow:0 10px 40px rgba(0,0,0,.06)}
+        .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px}
+        .logo-ic{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#8b5cf6);
+            display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;color:#fff;
+            box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .logo-tx{font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;color:#0f172a}
+        .logo-tx span{color:#06b6d4}
+        h1{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;text-align:center;margin-bottom:6px;color:#0f172a}
+        .sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:28px}
+        .form-group{margin-bottom:18px}
+        .form-label{display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+        .form-input{width:100%;padding:11px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;
+            font-size:14px;color:#0f172a;outline:none;transition:all .2s;font-family:'Inter',sans-serif}
+        .form-input:focus{border-color:#06b6d4;box-shadow:0 0 0 3px rgba(6,182,212,.1)}
+        .form-input::placeholder{color:#94a3b8}
+        .btn-submit{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;
+            background:linear-gradient(135deg,#0891b2,#06b6d4);cursor:pointer;transition:all .2s;margin-top:8px;
+            box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(6,182,212,.35)}
+        .link-row{text-align:center;margin-top:20px;font-size:13px;color:#64748b}
+        .link-row a{color:#06b6d4;text-decoration:none;font-weight:600}
+        .link-row a:hover{text-decoration:underline}
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 flex items-center justify-center p-4 font-sans">
+<body>
 
-    <!-- Card container -->
-    <div class="w-full max-w-md bg-white p-8 rounded-xl border border-slate-200 shadow-lg space-y-6">
-        
-        <!-- Logo/Header -->
-        <div class="text-center space-y-2">
-            <a href="/" class="inline-flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-lg">
-                    S
-                </div>
-                <span class="text-lg font-title font-bold tracking-tight text-slate-900">Smart<span class="text-sky-600">Healthcare</span></span>
-            </a>
-            <h2 class="text-2xl font-title font-bold tracking-tight text-slate-900">Chào Mừng Trở Lại!</h2>
-            <p class="text-sm text-slate-500">Đăng nhập tài khoản y tế số của bạn</p>
+<div class="login-card">
+    <div class="logo"><div class="logo-ic">S</div><span class="logo-tx">Smart<span>Healthcare</span></span></div>
+    <h1>Đăng Nhập</h1>
+    <p class="sub">Chào mừng bạn quay trở lại hệ thống.</p>
+    <form id="loginForm">
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="email" required class="form-input" placeholder="you@example.com">
         </div>
-
-        <!-- Alert Message Container -->
-        <div id="errorAlert" class="hidden bg-rose-50 text-rose-600 p-4 rounded-lg text-sm font-medium border border-rose-100 transition-all">
+        <div class="form-group">
+            <label class="form-label">Mật khẩu</label>
+            <input type="password" id="password" required class="form-input" placeholder="••••••••">
         </div>
+        <button type="submit" class="btn-submit">Đăng Nhập →</button>
+    </form>
+    <div class="link-row">Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></div>
+</div>
 
-        <!-- Login Form -->
-        <form id="loginForm" class="space-y-4">
-            <div class="space-y-1">
-                <label for="email" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</label>
-                <input type="email" id="email" required
-                       class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-all text-sm"
-                       placeholder="example@healthcare.com">
-            </div>
-
-            <div class="space-y-1">
-                <div class="flex justify-between">
-                    <label for="password" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Mật Khẩu</label>
-                </div>
-                <input type="password" id="password" required
-                       class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-all text-sm"
-                       placeholder="••••••••">
-            </div>
-
-            <button type="submit"
-                    class="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg shadow-sm transition-all hover:shadow mt-2 text-sm">
-                Đăng Nhập
-            </button>
-        </form>
-
-        <!-- Redirect to register -->
-        <p class="text-center text-sm text-slate-500">
-            Chưa có tài khoản? 
-            <a href="/register" class="text-sky-600 font-semibold hover:underline">Đăng ký ngay</a>
-        </p>
-
-    </div>
-
-    <!-- Login JS Logic -->
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorAlert = document.getElementById('errorAlert');
-
-            errorAlert.classList.add('hidden');
-
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Email hoặc mật khẩu không chính xác!');
-                }
-
-                // 1. Lưu JWT vào Cookie để dùng cho Thymeleaf load trang tiếp theo
-                document.cookie = "jwt=" + data.token + "; path=/; max-age=36000";
-
-                // Hiển thị Popup thành công và điều hướng
-                Swal.fire({
-                    title: 'Đăng nhập thành công!',
-                    text: 'Đang chuyển hướng đến bảng điều khiển...',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    if (data.role === 'ROLE_PATIENT') {
-                        window.location.href = '/patient/dashboard';
-                    } else if (data.role === 'ROLE_DOCTOR') {
-                        window.location.href = '/doctor/dashboard';
-                    } else if (data.role === 'ROLE_ADMIN') {
-                        window.location.href = '/admin/dashboard';
-                    } else {
-                        window.location.href = '/';
-                    }
-                });
-
-            } catch (err) {
-                Swal.fire({
-                    title: 'Đăng nhập thất bại',
-                    text: err.message,
-                    icon: 'error',
-                    confirmButtonColor: '#e11d48'
-                });
-            }
-        });
-    </script>
-
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch('/api/auth/login', {method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({email: document.getElementById('email').value, password: document.getElementById('password').value})
+            });
+            if (!res.ok) { const d = await res.json(); throw new Error(d.message || 'Sai email hoặc mật khẩu.'); }
+            const data = await res.json();
+            document.cookie = `jwt=${data.token}; path=/; max-age=36000`;
+            const role = data.role;
+            if (role === 'ADMIN' || role === 'ROLE_ADMIN') window.location.href = '/admin/dashboard';
+            else if (role === 'DOCTOR' || role === 'ROLE_DOCTOR') window.location.href = '/doctor/dashboard';
+            else window.location.href = '/patient/dashboard';
+        } catch(err) {
+            Swal.fire({title:'Đăng nhập thất bại',text:err.message,icon:'error',confirmButtonColor:'#06b6d4'});
+        }
+    });
+</script>
 </body>
 </html>

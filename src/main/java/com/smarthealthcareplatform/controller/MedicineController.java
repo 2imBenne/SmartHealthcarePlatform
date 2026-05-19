@@ -1,7 +1,7 @@
 package com.smarthealthcareplatform.controller;
 
 import com.smarthealthcareplatform.dto.MedicineRequest;
-import com.smarthealthcareplatform.entity.Medicine;
+import com.smarthealthcareplatform.dto.MedicineResponse;
 import com.smarthealthcareplatform.service.MedicalService;
 import com.smarthealthcareplatform.service.MedicineService;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +21,27 @@ public class MedicineController {
     private final MedicineService medicineService;
     private final MedicalService medicalService;
 
-    // Thêm / Tạo mới
+    // Thêm / Tạo mới — BUG-06 FIX: trả DTO thay vì Entity
     @PostMapping
-    public ResponseEntity<Medicine> createMedicine(@RequestBody MedicineRequest request) {
+    public ResponseEntity<MedicineResponse> createMedicine(@jakarta.validation.Valid @RequestBody MedicineRequest request) {
         return ResponseEntity.ok(medicineService.createMedicine(request));
     }
 
-    // Xem danh sách
+    // Xem danh sách — BUG-06 FIX: trả DTO thay vì Entity
     @GetMapping
-    public ResponseEntity<List<Medicine>> getAllMedicines() {
+    public ResponseEntity<List<MedicineResponse>> getAllMedicines() {
         return ResponseEntity.ok(medicineService.getAllMedicines());
     }
 
-    // Xem chi tiết 1 thuốc
+    // Xem chi tiết 1 thuốc — BUG-06 FIX: trả DTO thay vì Entity
     @GetMapping("/{id}")
-    public ResponseEntity<Medicine> getMedicineById(@PathVariable Long id) {
+    public ResponseEntity<MedicineResponse> getMedicineById(@PathVariable Long id) {
         return ResponseEntity.ok(medicineService.getMedicineById(id));
     }
 
-    // Sửa
+    // Sửa — BUG-06 FIX: trả DTO thay vì Entity
     @PutMapping("/{id}")
-    public ResponseEntity<Medicine> updateMedicine(@PathVariable Long id, @RequestBody MedicineRequest request) {
+    public ResponseEntity<MedicineResponse> updateMedicine(@PathVariable Long id, @jakarta.validation.Valid @RequestBody MedicineRequest request) {
         return ResponseEntity.ok(medicineService.updateMedicine(id, request));
     }
 

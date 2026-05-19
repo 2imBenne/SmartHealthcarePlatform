@@ -30,6 +30,11 @@ public class AuthService {
     // CORE-01 & CORE-03: Đăng ký + Tạo Hồ sơ
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        // BUG-01 FIX: Chặn đăng ký với role ADMIN từ API public
+        if (request.getRole() == null || request.getRole() == com.smarthealthcareplatform.entity.Role.ADMIN) {
+            throw new RuntimeException("Không được phép đăng ký với vai trò Quản trị viên (ADMIN)!");
+        }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email đã được sử dụng!");
         }

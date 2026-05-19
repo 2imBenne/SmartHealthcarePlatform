@@ -3,140 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thông Báo Hệ Thống - Smart Healthcare</title>
-    <!-- Google Fonts: Inter and Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        title: ['Outfit', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
+    <title>Lỗi — Smart Healthcare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter',sans-serif;background:#f8fafc;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        .err-card{text-align:center;max-width:420px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:48px 36px;
+            box-shadow:0 10px 40px rgba(0,0,0,.06)}
+        .err-code{font-family:'Outfit',sans-serif;font-size:72px;font-weight:900;
+            background:linear-gradient(135deg,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .err-title{font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:#0f172a;margin:8px 0}
+        .err-desc{font-size:14px;color:#64748b;margin-bottom:28px;line-height:1.6}
+        .btn-home{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border-radius:10px;border:none;
+            background:linear-gradient(135deg,#0891b2,#06b6d4);color:#fff;font-size:14px;font-weight:600;
+            cursor:pointer;text-decoration:none;transition:all .2s;box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .btn-home:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(6,182,212,.35)}
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between font-sans"
-      th:with="code=${status != null ? status : '404'}">
-
-    <!-- Top Navigation Header -->
-    <header class="w-full bg-white border-b border-slate-200 py-4 shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-lg shadow">S</div>
-                <span class="text-lg font-title font-bold tracking-tight text-slate-900">Smart<span class="text-sky-600">Care</span></span>
-            </div>
-            <div>
-                <a href="/" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition-colors">Cổng y tế quốc gia</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="flex-grow flex items-center justify-center p-6">
-        <div class="w-full max-w-2xl bg-white border border-slate-200 rounded-xl p-8 md:p-12 shadow-sm space-y-8 text-center">
-            
-            <!-- Graphic Error Code Block -->
-            <div class="space-y-3">
-                <!-- Large solid Slate Badge indicating error code -->
-                <div class="inline-flex items-center justify-center px-5 py-2 bg-slate-100 border border-slate-200 rounded-full font-mono text-slate-500 text-sm font-bold">
-                    ⚠️ MÃ PHẢN HỒI: <span th:text="${code}">404</span>
-                </div>
-
-                <h1 class="text-7xl font-title font-extrabold tracking-tight text-slate-900" 
-                    th:text="${code}">
-                    404
-                </h1>
-            </div>
-
-            <!-- Error Details -->
-            <div class="space-y-4">
-                <!-- 403 Forbidden -->
-                <div th:if="${code == '403' || code == 403}" class="space-y-3">
-                    <h2 class="text-xl md:text-2xl font-title font-bold text-rose-600 tracking-tight">🚫 KHÔNG CÓ QUYỀN TRUY CẬP</h2>
-                    <p class="text-slate-500 text-sm leading-relaxed">
-                        Tài khoản của bạn không được phân quyền hoặc thiếu vai trò (Role) phù hợp để truy cập phân hệ y khoa này. Vui lòng đăng nhập lại bằng tài khoản có thẩm quyền tương ứng.
-                    </p>
-                </div>
-
-                <!-- 401 Unauthorized -->
-                <div th:if="${code == '401' || code == 401}" class="space-y-3">
-                    <h2 class="text-xl md:text-2xl font-title font-bold text-amber-600 tracking-tight">🔑 PHIÊN LÀM VIỆC HẾT HẠN</h2>
-                    <p class="text-slate-500 text-sm leading-relaxed">
-                        Phiên làm việc của bạn đã hết hạn hoặc bạn chưa thực hiện đăng nhập vào hệ thống y tế. Vui lòng đăng nhập để hệ thống cấp khóa xác thực an toàn.
-                    </p>
-                </div>
-
-                <!-- 500 Internal Server Error -->
-                <div th:if="${code == '500' || code == 500}" class="space-y-3">
-                    <h2 class="text-xl md:text-2xl font-title font-bold text-rose-600 tracking-tight">💥 LỖI XỬ LÝ HỆ THỐNG MÁY CHỦ</h2>
-                    <p class="text-slate-500 text-sm leading-relaxed">
-                        Máy chủ y khoa gặp sự cố đột xuất khi xử lý dữ liệu trang này (Template Engine / Database / NullPointer). Chi tiết lỗi để gỡ lỗi:
-                    </p>
-                </div>
-
-                <!-- 404 Not Found (Default) -->
-                <div th:if="${code != '403' && code != 403 && code != '401' && code != 401 && code != '500' && code != 500}" class="space-y-3">
-                    <h2 class="text-xl md:text-2xl font-title font-bold text-slate-950 tracking-tight">🏥 KHÔNG TÌM THẤY TRANG Y KHOA</h2>
-                    <p class="text-slate-500 text-sm leading-relaxed">
-                        Đường dẫn bạn yêu cầu không tồn tại trên hệ thống SmartCare, đã bị loại bỏ hoặc hồ sơ bệnh án liên quan đã được chuyển dịch sang phân hệ khác.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Diagnostics / Technical details for developers -->
-            <div th:if="${exception != null || message != null || path != null}" 
-                 class="border border-red-200 rounded-lg overflow-hidden text-left text-xs bg-red-50/50 p-4 space-y-2">
-                <h4 class="font-bold text-rose-700 uppercase tracking-wider">🔬 Nhật ký chẩn đoán lỗi (Diagnostic Log)</h4>
-                <div class="space-y-1 text-slate-600">
-                    <p th:if="${path != null}">📍 <strong>Đường dẫn gặp lỗi:</strong> <code class="bg-white px-1.5 py-0.5 rounded border border-slate-200" th:text="${path}">/admin/dashboard</code></p>
-                    <p th:if="${exception != null}">⚠️ <strong>Loại Ngoại lệ (Exception):</strong> <code class="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-rose-600" th:text="${exception}">NullPointerException</code></p>
-                    <p th:if="${message != null}">💬 <strong>Thông điệp lỗi (Message):</strong> <span class="font-mono text-slate-700" th:text="${message}">Error description...</span></p>
-                </div>
-            </div>
-
-            <!-- Diagnostic Details Table -->
-            <div class="border border-slate-200 rounded-lg overflow-hidden text-left text-xs bg-slate-50">
-                <div class="grid grid-cols-3 border-b border-slate-200 p-3">
-                    <span class="text-slate-400 font-semibold uppercase">Đối Tượng</span>
-                    <span class="col-span-2 text-slate-700 font-medium">Cổng thông tin y tế SmartCare</span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-200 p-3">
-                    <span class="text-slate-400 font-semibold uppercase">Trạng Thái</span>
-                    <span class="col-span-2 text-slate-700 font-semibold"
-                          th:classappend="${code == '500' || code == 500 || code == '403' || code == 403} ? 'text-rose-600' : 'text-slate-700'"
-                          th:text="${code == '500' || code == 500 ? 'Hệ thống máy chủ gặp sự cố' : 'Đã bị chặn truy cập an toàn'}">Đã bị chặn truy cập an toàn</span>
-                </div>
-                <div class="grid grid-cols-3 p-3">
-                    <span class="text-slate-400 font-semibold uppercase">Khuyến Nghị</span>
-                    <span class="col-span-2 text-slate-700 font-medium" th:text="${code == '403' ? 'Đăng xuất và đăng nhập bằng tài khoản Quản trị/Dược sĩ/Bác sĩ' : 'Quay lại Trang chủ hoặc Đăng nhập lại'}">Quay lại Trang chủ hoặc Đăng nhập lại</span>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
-                <a href="/" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg text-sm shadow-sm hover:shadow transition-all text-center">
-                    ⬅️ Quay về Trang Chủ
-                </a>
-                <a href="/login" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-lg text-sm transition-all text-center">
-                    🔑 Đăng Nhập Tài Khoản Khác
-                </a>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer Support Information -->
-    <footer class="w-full bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
-        <div class="max-w-7xl mx-auto px-6 space-y-1">
-            <p>🏥 <strong>Cổng thông tin hỗ trợ kỹ thuật SmartCare Quốc Gia</strong></p>
-            <p>Hotline hỗ trợ: <strong class="text-slate-600">1900 6060 (Phím 2)</strong> | Email kỹ thuật: support@smartcare.gov.vn</p>
-        </div>
-    </footer>
-
+<body>
+<div class="err-card">
+    <div class="err-code" th:text="${errorCode != null ? errorCode : '404'}">404</div>
+    <div class="err-title">Đã xảy ra lỗi</div>
+    <p class="err-desc">Trang bạn tìm kiếm không tồn tại hoặc bạn không có quyền truy cập.</p>
+    <a href="/" class="btn-home">← Về Trang Chủ</a>
+</div>
 </body>
 </html>

@@ -3,132 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Healthcare - Nền Tảng Y Tế Số Toàn Diện</title>
-    <!-- Google Fonts: Inter and Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        title: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        medical: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Smart Healthcare — Nền Tảng Y Tế Số Toàn Diện</title>
+    <meta name="description" content="Hệ thống Y tế số thông minh - Đặt lịch khám, quản lý bệnh án, kê đơn thuốc trực tuyến.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a;overflow-x:hidden}
+
+        /* HEADER */
+        header{position:fixed;top:0;width:100%;z-index:100;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);
+            border-bottom:1px solid #e2e8f0;padding:0 40px;display:flex;justify-content:space-between;align-items:center;height:64px}
+        .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .logo-ic{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#8b5cf6);
+            display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:#fff;
+            box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .logo-tx{font-family:'Outfit',sans-serif;font-weight:700;font-size:17px;color:#0f172a}
+        .logo-tx span{color:#06b6d4}
+        .header-btns{display:flex;gap:10px}
+        .btn-login{padding:8px 20px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;
+            color:#334155;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+        .btn-login:hover{border-color:#06b6d4;color:#06b6d4}
+        .btn-cta{padding:8px 22px;border-radius:8px;border:none;background:linear-gradient(135deg,#0891b2,#06b6d4);
+            color:#fff;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;
+            box-shadow:0 4px 12px rgba(6,182,212,.25)}
+        .btn-cta:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(6,182,212,.35)}
+
+        /* HERO */
+        .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;
+            background:linear-gradient(180deg,#f0fdfa 0%,#f8fafc 40%,#fff 100%)}
+        .hero h1{font-family:'Outfit',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.15;margin-bottom:20px;color:#0f172a}
+        .hero h1 .gradient{background:linear-gradient(135deg,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hero p{font-size:17px;color:#64748b;max-width:560px;margin:0 auto 36px;line-height:1.7}
+        .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+        .hero-btn{padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;
+            transition:all .2s;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+        .hero-btn.primary{background:linear-gradient(135deg,#0891b2,#06b6d4);color:#fff;border:none;
+            box-shadow:0 8px 24px rgba(6,182,212,.25)}
+        .hero-btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(6,182,212,.35)}
+        .hero-btn.secondary{background:#fff;color:#334155;border:2px solid #e2e8f0}
+        .hero-btn.secondary:hover{border-color:#06b6d4;color:#06b6d4}
+
+        /* FEATURES */
+        .features{padding:80px 40px;max-width:1100px;margin:0 auto}
+        .features-title{text-align:center;font-family:'Outfit',sans-serif;font-size:32px;font-weight:800;margin-bottom:12px;color:#0f172a}
+        .features-sub{text-align:center;font-size:15px;color:#64748b;margin-bottom:48px}
+        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+        .feat-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:32px 28px;transition:all .3s;
+            box-shadow:0 1px 3px rgba(0,0,0,.04)}
+        .feat-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.08);border-color:#cbd5e1}
+        .feat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+            font-size:22px;margin-bottom:16px}
+        .feat-icon.teal{background:rgba(6,182,212,.1)}
+        .feat-icon.violet{background:rgba(139,92,246,.1)}
+        .feat-icon.green{background:rgba(16,185,129,.1)}
+        .feat-icon.amber{background:rgba(245,158,11,.1)}
+        .feat-card h3{font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;margin-bottom:8px;color:#0f172a}
+        .feat-card p{font-size:13px;color:#64748b;line-height:1.6}
+
+        /* FOOTER */
+        footer{text-align:center;padding:40px 20px;border-top:1px solid #e2e8f0;background:#fff;
+            font-size:13px;color:#94a3b8}
+        footer span{color:#06b6d4;font-weight:600}
+
+        @media(max-width:640px){header{padding:0 16px}.hero{padding:100px 16px 60px}.features{padding:60px 16px}}
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between font-sans">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-xl shadow-md">
-                    S
-                </div>
-                <span class="text-xl font-title font-bold tracking-tight text-slate-900">Smart<span class="text-sky-600">Healthcare</span></span>
-            </div>
-            
-            <nav class="flex gap-4 items-center">
-                <a href="/login" class="text-sm font-semibold text-slate-600 hover:text-sky-600 transition-colors px-3 py-2">Đăng Nhập</a>
-                <a href="/register" class="text-sm font-semibold bg-sky-600 hover:bg-sky-700 text-white py-2.5 px-5 rounded-lg shadow-sm transition-all hover:shadow-md">Đăng Ký</a>
-            </nav>
+<header>
+    <a href="/" class="logo"><div class="logo-ic">S</div><span class="logo-tx">Smart<span>Healthcare</span></span></a>
+    <div class="header-btns">
+        <a href="/login" class="btn-login">Đăng Nhập</a>
+        <a href="/register" class="btn-cta">Đăng Ký</a>
+    </div>
+</header>
+
+<section class="hero">
+    <div>
+        <h1>Nền Tảng <span class="gradient">Y Tế Số</span><br>Toàn Diện</h1>
+        <p>Đặt lịch khám, quản lý bệnh án và kê đơn thuốc — tất cả trong một hệ thống an toàn, nhanh chóng và chuyên nghiệp.</p>
+        <div class="hero-btns">
+            <a href="/register" class="hero-btn primary">🚀 Bắt Đầu Ngay</a>
+            <a href="#features" class="hero-btn secondary">Tìm Hiểu Thêm ↓</a>
         </div>
-    </header>
+    </div>
+</section>
 
-    <!-- Main Section -->
-    <main class="flex-grow flex flex-col lg:flex-row items-center justify-between gap-16 px-6 md:px-12 py-16 max-w-7xl mx-auto w-full">
-        <!-- Hero Text -->
-        <div class="flex-1 space-y-6 text-center lg:text-left">
-            <div class="inline-flex items-center gap-2 bg-sky-50 text-sky-700 py-1.5 px-4 rounded-full text-xs font-semibold uppercase tracking-wider border border-sky-100">
-                🏥 CỔNG THÔNG TIN Y TẾ SỐ QUỐC GIA
-            </div>
-            <h1 class="text-4xl md:text-5xl font-title font-bold tracking-tight text-slate-900 leading-tight">
-                Chăm sóc Sức khỏe Chủ động <br>
-                <span class="text-sky-600">Thông minh & Toàn diện</span>
-            </h1>
-            <p class="text-slate-600 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Nền tảng trực tuyến kết nối bệnh nhân và đội ngũ bác sĩ chuyên khoa đầu ngành. Đăng ký lịch hẹn nhanh chóng, theo dõi bệnh án điện tử tập trung và cấp phát thuốc an toàn theo quy chuẩn quốc tế.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a href="/register" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3.5 px-8 rounded-lg shadow-md hover:shadow-lg transition-all text-center">
-                    Đặt lịch khám ngay
-                </a>
-                <a href="/login" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-semibold py-3.5 px-8 rounded-lg transition-all text-center">
-                    Đăng nhập tài khoản
-                </a>
-            </div>
-
-            <!-- Trust Badges -->
-            <div class="pt-8 border-t border-slate-200 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
-                <div class="text-center lg:text-left">
-                    <div class="text-2xl font-bold text-slate-900 font-title">50+</div>
-                    <div class="text-xs text-slate-500 font-medium">Bác sĩ chuyên khoa</div>
-                </div>
-                <div class="text-center lg:text-left">
-                    <div class="text-2xl font-bold text-slate-900 font-title">10,000+</div>
-                    <div class="text-xs text-slate-500 font-medium">Bệnh nhân tin dùng</div>
-                </div>
-                <div class="text-center lg:text-left">
-                    <div class="text-2xl font-bold text-slate-900 font-title">99%</div>
-                    <div class="text-xs text-slate-500 font-medium">Phản hồi hài lòng</div>
-                </div>
-            </div>
+<section class="features" id="features">
+    <h2 class="features-title">Tính Năng Nổi Bật</h2>
+    <p class="features-sub">Hệ thống được xây dựng với các tiêu chuẩn bảo mật và hiệu năng cao nhất.</p>
+    <div class="features-grid">
+        <div class="feat-card">
+            <div class="feat-icon teal">🗓️</div>
+            <h3>Đặt Lịch Thông Minh</h3>
+            <p>Hệ thống tự động chống xung đột lịch hẹn ở cấp Database. Mỗi khung giờ của bác sĩ là duy nhất, không bao giờ bị trùng lặp.</p>
         </div>
-
-        <!-- Decorative Info Grid (Clean Slate Professional Cards) -->
-        <div class="flex-1 w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-sky-300">
-                <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold mb-4">🗓️</div>
-                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Đặt lịch hẹn trực tuyến</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Chủ động lựa chọn bác sĩ, chuyên khoa khám và thời gian phù hợp chỉ trong 1 phút.</p>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-emerald-300 sm:translate-y-4">
-                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold mb-4">📋</div>
-                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Hồ sơ bệnh án điện tử</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Xem lại triệu chứng, chẩn đoán chi tiết và dặn dò của bác sĩ mọi lúc mọi nơi.</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-sky-300 sm:-translate-y-4">
-                <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold mb-4">💊</div>
-                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Quản lý kho dược phẩm</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Quy trình cấp phát thuốc khép kín kết hợp kiểm soát tồn kho chống bán lố.</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-amber-300">
-                <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold mb-4">🔒</div>
-                <h3 class="font-title font-bold text-lg text-slate-900 mb-2">Bảo mật dữ liệu tuyệt đối</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Xác thực mạnh mẽ qua mã hóa JWT và cơ chế phân quyền kiểm soát nghiêm ngặt.</p>
-            </div>
+        <div class="feat-card">
+            <div class="feat-icon green">💊</div>
+            <h3>Quản Lý Dược Phẩm</h3>
+            <p>Kho thuốc với Pessimistic Locking — đảm bảo tồn kho chính xác ngay cả khi hàng trăm request cấp phát đồng thời.</p>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="w-full py-8 text-center text-sm text-slate-500 border-t border-slate-200 bg-white shadow-inner">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div>&copy; 2026 Smart Healthcare Platform. Bảo lưu mọi quyền.</div>
-            <div class="flex gap-6 text-xs text-slate-400">
-                <a href="#" class="hover:text-sky-600">Điều khoản sử dụng</a>
-                <a href="#" class="hover:text-sky-600">Chính sách bảo mật</a>
-                <a href="#" class="hover:text-sky-600">Hỗ trợ 24/7</a>
-            </div>
+        <div class="feat-card">
+            <div class="feat-icon amber">📋</div>
+            <h3>Bệnh Án Toàn Vẹn</h3>
+            <p>Mỗi ca khám tạo bệnh án + đơn thuốc trong một Transaction duy nhất. Nếu lỗi, toàn bộ được rollback an toàn.</p>
         </div>
-    </footer>
+    </div>
+</section>
+
+<footer>
+    © 2026 <span>Smart Healthcare Platform</span>. Đồ án Nền Tảng Y Tế Số Toàn Diện.
+</footer>
 
 </body>
 </html>

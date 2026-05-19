@@ -3,318 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Điều Khiển Bác Sĩ - Smart Healthcare</title>
-    <!-- Google Fonts: Inter and Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert2 for beautiful popups -->
+    <title>Bác Sĩ — Smart Healthcare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        title: ['Outfit', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800 font-sans">
+<body>
 
-    <!-- Sidebar Menu -->
-    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-6 border-r border-slate-800">
-        <div class="space-y-8">
-            <!-- Brand -->
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-lg shadow">S</div>
-                <span class="text-lg font-title font-bold tracking-tight text-white">Smart<span class="text-sky-500">Care</span></span>
-            </div>
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <a href="/" class="logo"><div class="logo-ic">S</div><span class="logo-tx">Smart<span>Healthcare</span></span></a>
+        <nav class="nav-menu">
+            <button onclick="switchTab('waitingListTab')" class="nav-btn active" id="btn-waitingListTab"><span class="nav-icon">🩺</span> Danh Sách Chờ Khám</button>
+            <button onclick="switchTab('pendingListTab')" class="nav-btn" id="btn-pendingListTab"><span class="nav-icon">📥</span> Lịch Hẹn Chờ Duyệt</button>
+        </nav>
+    </div>
+    <button onclick="logout()" class="logout-btn"><span class="nav-icon">🚪</span> Đăng Xuất</button>
+</aside>
 
-            <!-- Navigation Links -->
-            <nav class="space-y-1">
-                <button onclick="switchTab('waitingListTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-waitingListTab">
-                    🩺 Danh Sách Chờ Khám
-                </button>
-            </nav>
+<main class="main">
+    <div class="welcome-bar">
+        <div class="welcome-info">
+            <h1>Bác sĩ: <span th:text="${doctor.user.profile.fullName}">Tên BS</span></h1>
+            <p th:text="${'Chuyên khoa: ' + doctor.specialty.name}">Chuyên khoa</p>
         </div>
-
-        <!-- Logout Button -->
-        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-rose-950/30 hover:bg-rose-900 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8 border border-rose-900/30">
-            🚪 Đăng Xuất
-        </button>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow p-6 md:p-10 space-y-8 overflow-y-auto max-w-7xl mx-auto w-full">
-        
-        <!-- Welcome banner -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 md:p-8 rounded-xl text-slate-800 shadow-sm">
-            <div class="space-y-1">
-                <h1 class="text-2xl md:text-3xl font-title font-bold tracking-tight text-slate-900">Bác sĩ: <span th:text="${doctor.user.profile.fullName}" class="text-sky-600">Bác Sĩ Mẫu</span></h1>
-                <p class="text-slate-500 text-sm" th:text="${'Chuyên khoa khoa học: ' + doctor.specialty.name}">Chuyên khoa mẫu</p>
-            </div>
-            <div>
-                <span class="text-xs bg-sky-50 text-sky-700 py-1.5 px-3 rounded-full font-bold border border-sky-200">🩺 Chế độ làm việc tích cực</span>
-            </div>
-        </header>
-
-        <!-- Dynamic Tabs -->
-        
-        <!-- Waiting List & Examination Tab -->
-        <section id="waitingListTab" class="tab-content space-y-6">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-4">
-                <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">🩺 Danh Sách Lịch Khám Trong Ngày</h2>
-                <span class="text-xs bg-sky-50 text-sky-700 py-1 px-3 rounded-full font-bold border border-sky-200">Hôm nay</span>
-            </div>
-
-            <!-- Pending list -->
-            <div class="space-y-4">
-                <div th:each="appt : ${confirmedAppointments}" class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-sm transition-all border-l-4 border-emerald-500">
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-slate-900" th:text="${appt.patient.profile.fullName}">Bệnh Nhân</span>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-100">Sẵn Sàng Khám</span>
-                        </div>
-                        <p class="text-slate-500 text-xs flex items-center gap-3">
-                            <span>⏰ Giờ khám: <strong class="text-slate-700" th:text="${appt.startTime + ' - ' + appt.endTime}">08:00 - 08:30</strong></span>
-                            <span>📞 SĐT: <strong class="text-slate-700" th:text="${appt.patient.profile.phoneNumber}">0912345678</strong></span>
-                        </p>
-                        <p class="text-slate-600 text-sm" th:text="${'Triệu chứng khai báo: ' + appt.reason}">Lý do</p>
-                    </div>
-                    <button th:data-id="${appt.id}"
-                            th:data-name="${appt.patient != null && appt.patient.profile != null ? appt.patient.profile.fullName : ''}"
-                            onclick="openExamModal(this)"
-                            class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-sm hover:shadow transition-all text-sm">
-                        🩺 Bắt Đầu Khám
-                    </button>
-                </div>
-
-                <div th:if="${confirmedAppointments == null or confirmedAppointments.isEmpty()}" class="bg-white p-8 text-center text-slate-400 rounded-xl border border-slate-200">
-                    Hiện chưa có ca khám nào ở trạng thái Chờ Khám (Đã Xác Nhận).
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Examination Modal (CORE-06) -->
-    <div id="examModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-2xl border border-slate-200 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <h3 class="text-xl font-title font-bold text-slate-900">🩺 Lập Phiếu Khám & Kê Đơn: <span id="patientNameLabel" class="text-sky-600">Bệnh Nhân</span></h3>
-                <button onclick="closeExamModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
-            </div>
-
-            <form id="examForm" class="space-y-4">
-                <input type="hidden" id="apptIdInput">
-
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Triệu chứng lâm sàng ghi nhận</label>
-                    <textarea id="symptomsInput" rows="2" required
-                              class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Đau rát họng, ho khạc đờm trắng, sốt nhẹ..."></textarea>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chẩn đoán kết luận y khoa</label>
-                    <input type="text" id="diagnosisInput" required
-                           class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Viêm họng cấp / Viêm phế quản">
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Lời dặn & Hướng dẫn điều trị</label>
-                    <textarea id="adviceInput" rows="2"
-                              class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Uống nhiều nước ấm, súc họng nước muối ấm, nghỉ ngơi hợp lý..."></textarea>
-                </div>
-
-                <!-- Prescription Section -->
-                <div class="space-y-3 pt-2">
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                        <h4 class="text-sm font-bold text-slate-900">💊 Toa Thuốc Chỉ Định</h4>
-                        <button type="button" onclick="addMedicineRow()" class="bg-sky-50 hover:bg-sky-100 text-sky-600 text-xs font-bold py-1.5 px-3 rounded-lg border border-sky-200">+ Thêm thuốc chỉ định</button>
-                    </div>
-
-                    <div id="prescriptionRows" class="space-y-3">
-                        <!-- Dynamic rows will be added here -->
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-100">
-                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm hover:shadow text-sm">
-                        💾 Lưu Bệnh Án & Gửi Đơn Sang Chờ Cấp Phát
-                    </button>
-                </div>
-            </form>
-        </div>
+        <span class="badge badge-cyan">🩺 Đang làm việc</span>
     </div>
 
-    <!-- JS Controllers -->
-    <script th:inline="javascript">
-        // Danh sách thuốc từ Thymeleaf model sang JS
-        const allMedicines = /*[[${medicines}]]*/ [];
+    <!-- Waiting List Tab -->
+    <section id="waitingListTab" class="tab-content active">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 class="card-title">🩺 Lịch Khám Hôm Nay</h2>
+            <span class="badge badge-cyan">Hôm nay</span>
+        </div>
+        <div th:each="appt : ${confirmedAppointments}" class="appt-card border-green">
+            <div>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="appt-name" th:text="${appt.patient.profile.fullName}">BN</span>
+                    <span class="badge badge-green">Sẵn Sàng Khám</span>
+                </div>
+                <div class="appt-meta">
+                    <span>⏰ <strong th:text="${appt.startTime + ' - ' + appt.endTime}">08:00-08:30</strong></span>
+                    <span>📞 <strong th:text="${appt.patient.profile.phoneNumber}">SĐT</strong></span>
+                </div>
+                <div class="appt-reason" th:text="${'Triệu chứng: ' + appt.reason}"></div>
+            </div>
+            <button th:data-id="${appt.id}"
+                    th:data-name="${appt.patient != null && appt.patient.profile != null ? appt.patient.profile.fullName : ''}"
+                    onclick="openExamModal(this)" class="btn-primary">🩺 Bắt Đầu Khám</button>
+        </div>
+        <div th:if="${confirmedAppointments == null or confirmedAppointments.isEmpty()}" class="empty">Chưa có ca khám nào ở trạng thái Chờ Khám.</div>
+    </section>
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
+    <!-- Pending Tab -->
+    <section id="pendingListTab" class="tab-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 class="card-title">📥 Yêu Cầu Khám Mới</h2>
+            <span class="badge badge-amber">Chờ Duyệt</span>
+        </div>
+        <div th:each="appt : ${pendingAppointments}" class="appt-card border-amber">
+            <div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span class="appt-name" th:text="${appt.patient.profile.fullName}">BN</span>
+                    <span class="badge badge-amber">Chờ Duyệt</span>
+                </div>
+                <div class="appt-meta">
+                    <span>📅 <strong th:text="${appt.appointmentDate}">Ngày</strong></span>
+                    <span>⏰ <strong th:text="${appt.startTime + ' - ' + appt.endTime}">Giờ</strong></span>
+                    <span>📞 <strong th:text="${appt.patient.profile.phoneNumber}">SĐT</strong></span>
+                </div>
+                <div class="appt-reason" th:text="${'Triệu chứng: ' + appt.reason}"></div>
+            </div>
+            <button th:data-id="${appt.id}" onclick="confirmAppointment(this)" class="btn-green">✅ Duyệt</button>
+        </div>
+        <div th:if="${pendingAppointments == null or pendingAppointments.isEmpty()}" class="empty">Không có yêu cầu khám mới chờ duyệt.</div>
+    </section>
+</main>
 
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-slate-800', 'text-white');
-            });
-            document.getElementById('btn-' + tabId).classList.add('bg-slate-800', 'text-white');
-        }
+<!-- Exam Modal -->
+<div id="examModal" class="modal-overlay hidden">
+    <div class="modal-box lg">
+        <div class="modal-header">
+            <h3 class="modal-title">🩺 Khám bệnh: <span id="patientNameLabel">BN</span></h3>
+            <button onclick="closeExamModal()" class="modal-close">&times;</button>
+        </div>
+        <form id="examForm">
+            <input type="hidden" id="apptIdInput">
+            <div class="form-group">
+                <label class="form-label">Triệu chứng lâm sàng</label>
+                <textarea id="symptomsInput" rows="2" required class="form-textarea" placeholder="Ví dụ: Đau rát họng, ho..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Chẩn đoán kết luận</label>
+                <input type="text" id="diagnosisInput" required class="form-input" placeholder="Ví dụ: Viêm họng cấp">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lời dặn điều trị</label>
+                <textarea id="adviceInput" rows="2" class="form-textarea" placeholder="Ví dụ: Uống nhiều nước ấm..."></textarea>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-top:8px;border-top:1px solid var(--border)">
+                <div style="font-size:14px;font-weight:700;color:#fff">💊 Toa Thuốc</div>
+                <button type="button" onclick="addMedicineRow()" class="btn-ghost">+ Thêm thuốc</button>
+            </div>
+            <div id="prescriptionRows"></div>
+            <button type="submit" class="btn-green" style="width:100%;justify-content:center;margin-top:16px">💾 Lưu Bệnh Án & Đơn Thuốc</button>
+        </form>
+    </div>
+</div>
 
-        function openExamModal(btn) {
-            const apptId = btn.getAttribute('data-id');
-            const patientName = btn.getAttribute('data-name');
-            document.getElementById('apptIdInput').value = apptId;
-            document.getElementById('patientNameLabel').textContent = patientName;
-            document.getElementById('prescriptionRows').innerHTML = ''; // reset
-            addMedicineRow(); // start with one empty row
-            document.getElementById('examModal').classList.remove('hidden');
-        }
+<script th:inline="javascript">
+    const allMedicines = /*[[${medicines}]]*/ [];
 
-        function closeExamModal() {
-            document.getElementById('examModal').classList.add('hidden');
-        }
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + tabId).classList.add('active');
+    }
 
-        function addMedicineRow() {
-            const container = document.getElementById('prescriptionRows');
-            const rowId = 'row_' + Date.now();
+    function openExamModal(btn) {
+        document.getElementById('apptIdInput').value = btn.getAttribute('data-id');
+        document.getElementById('patientNameLabel').textContent = btn.getAttribute('data-name');
+        document.getElementById('prescriptionRows').innerHTML = '';
+        addMedicineRow();
+        document.getElementById('examModal').classList.remove('hidden');
+    }
+    function closeExamModal() { document.getElementById('examModal').classList.add('hidden'); }
 
-            const row = document.createElement('div');
-            row.id = rowId;
-            row.className = 'grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/50 relative';
+    function addMedicineRow() {
+        const c = document.getElementById('prescriptionRows');
+        const row = document.createElement('div');
+        row.className = 'pres-row';
+        let opts = '<option value="">-- Chọn thuốc --</option>';
+        allMedicines.forEach(m => { if(m.isActive) opts += `<option value="${m.id}">${m.name} (Tồn: ${m.stockQuantity})</option>`; });
+        row.innerHTML = `
+            <div class="form-group" style="margin:0"><label class="form-label">Thuốc</label><select class="med-select form-select" required>${opts}</select></div>
+            <div class="form-group" style="margin:0"><label class="form-label">SL</label><input type="number" min="1" class="med-qty form-input" required></div>
+            <div class="form-group" style="margin:0"><label class="form-label">Liều</label><input type="text" class="med-inst form-input" required placeholder="2 lần/ngày"></div>
+            <button type="button" class="del-btn" onclick="this.parentElement.remove()">&times;</button>`;
+        c.appendChild(row);
+    }
 
-            // Select Medicine
-            const selectDiv = document.createElement('div');
-            selectDiv.className = 'sm:col-span-2 space-y-1';
-            selectDiv.innerHTML = '<label class="text-[10px] font-bold text-slate-400 uppercase">Thuốc</label>';
-            const select = document.createElement('select');
-            select.className = 'med-select w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none';
-            select.required = true;
-            select.innerHTML = '<option value="">-- Chọn thuốc --</option>';
-            allMedicines.forEach(med => {
-                if (med.isActive) {
-                    const opt = document.createElement('option');
-                    opt.value = med.id;
-                    opt.textContent = `${med.name} (Tồn: ${med.stockQuantity})`;
-                    select.appendChild(opt);
-                }
-            });
-            selectDiv.appendChild(select);
-            row.appendChild(selectDiv);
-
-            // Quantity
-            const qtyDiv = document.createElement('div');
-            qtyDiv.className = 'space-y-1';
-            qtyDiv.innerHTML = '<label class="text-[10px] font-bold text-slate-400 uppercase">Số lượng</label>';
-            const qtyInput = document.createElement('input');
-            qtyInput.type = 'number';
-            qtyInput.min = '1';
-            qtyInput.className = 'med-qty w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none';
-            qtyInput.required = true;
-            qtyDiv.appendChild(qtyInput);
-            row.appendChild(qtyDiv);
-
-            // Delete button / Instruction
-            const instDiv = document.createElement('div');
-            instDiv.className = 'space-y-1 relative';
-            instDiv.innerHTML = '<label class="text-[10px] font-bold text-slate-400 uppercase">Cách dùng</label>';
-            
-            const instInput = document.createElement('input');
-            instInput.type = 'text';
-            instInput.className = 'med-inst w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none pr-8';
-            instInput.required = true;
-            instInput.placeholder = "Ví dụ: Ngày 2 lần";
-            instDiv.appendChild(instInput);
-
-            // Delete btn
-            const delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.className = 'absolute right-2 top-8 text-rose-500 hover:text-rose-700 font-bold text-sm';
-            delBtn.innerHTML = '&times;';
-            delBtn.onclick = () => row.remove();
-            instDiv.appendChild(delBtn);
-
-            row.appendChild(instDiv);
-            container.appendChild(row);
-        }
-
-        // Tạo bệnh án (CORE-06)
-        document.getElementById('examForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const appointmentId = document.getElementById('apptIdInput').value;
-            const symptoms = document.getElementById('symptomsInput').value;
-            const diagnosis = document.getElementById('diagnosisInput').value;
-            const advice = document.getElementById('adviceInput').value;
-
-            const prescriptionItems = [];
-            const rows = document.querySelectorAll('#prescriptionRows > div');
-            
-            rows.forEach(row => {
-                const medicineId = row.querySelector('.med-select').value;
-                const quantity = row.querySelector('.med-qty').value;
-                const dosageInstructions = row.querySelector('.med-inst').value;
-                
-                if (medicineId && quantity) {
-                    prescriptionItems.push({
-                        medicineId: parseInt(medicineId),
-                        quantity: parseInt(quantity),
-                        dosageInstructions
-                    });
-                }
-            });
-
-            const token = getJwtFromCookie();
-
-            try {
-                const response = await fetch('/api/doctor/medical-records', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({ appointmentId, symptoms, diagnosis, advice, prescriptionItems })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Lỗi lưu kết quả khám bệnh hoặc thiếu thuốc tồn kho.');
-                }
-
-                Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Ghi nhận bệnh án và toa thuốc thành công! Đơn thuốc đang chờ cấp phát.',
-                    icon: 'success',
-                    confirmButtonColor: '#0284c7'
-                }).then(() => {
-                    location.reload();
-                });
-
-            } catch (err) {
-                Swal.fire({
-                    title: 'Lỗi',
-                    text: err.message,
-                    icon: 'error',
-                    confirmButtonColor: '#e11d48'
-                });
-            }
+    document.getElementById('examForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const prescriptionItems = [];
+        document.querySelectorAll('#prescriptionRows > div').forEach(row => {
+            const mid = row.querySelector('.med-select').value;
+            const qty = row.querySelector('.med-qty').value;
+            const dos = row.querySelector('.med-inst').value;
+            if(mid && qty) prescriptionItems.push({medicineId:parseInt(mid),quantity:parseInt(qty),dosageInstructions:dos});
         });
-
-        function getJwtFromCookie() {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; jwt=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return '';
+        const token = getJwtFromCookie();
+        try {
+            const res = await fetch('/api/doctor/medical-records', {method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({
+                    appointmentId: document.getElementById('apptIdInput').value,
+                    symptoms: document.getElementById('symptomsInput').value,
+                    diagnosis: document.getElementById('diagnosisInput').value,
+                    advice: document.getElementById('adviceInput').value,
+                    prescriptionItems
+                })
+            });
+            if (!res.ok) throw new Error('Lỗi lưu bệnh án.');
+            Swal.fire({title:'Thành công!',text:'Ghi nhận bệnh án thành công!',icon:'success',
+                confirmButtonColor:'rgb(6,182,212)'}).then(() => location.reload());
+        } catch(err) {
+            Swal.fire({title:'Lỗi',text:err.message,icon:'error'});
         }
+    });
 
-        function logout() {
-            document.cookie = "jwt=; path=/; max-age=0";
-            window.location.href = '/login';
+    async function confirmAppointment(btn) {
+        const id = btn.getAttribute('data-id');
+        const r = await Swal.fire({title:'Duyệt lịch?',icon:'question',showCancelButton:true,
+            confirmButtonColor:'rgb(16,185,129)',cancelButtonColor:'#94a3b8',
+            confirmButtonText:'Đồng ý',cancelButtonText:'Hủy'});
+        if (!r.isConfirmed) return;
+        const token = getJwtFromCookie();
+        try {
+            const res = await fetch('/api/doctor/appointments/'+id+'/confirm', {method:'PUT',headers:{'Authorization':'Bearer '+token}});
+            if (!res.ok) throw new Error('Không thể duyệt.');
+            Swal.fire({title:'Đã duyệt!',icon:'success',confirmButtonColor:'rgb(6,182,212)'}).then(() => location.reload());
+        } catch(err) {
+            Swal.fire({title:'Lỗi',text:err.message,icon:'error'});
         }
-    </script>
+    }
 
+    function getJwtFromCookie() {
+        const v = `; ${document.cookie}`;
+        const p = v.split(`; jwt=`);
+        if (p.length === 2) return p.pop().split(';').shift();
+        return '';
+    }
+    function logout() { document.cookie = "jwt=; path=/; max-age=0"; window.location.href = '/login'; }
+</script>
 </body>
 </html>

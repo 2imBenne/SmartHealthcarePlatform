@@ -3,483 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Điều Khiển Bệnh Nhân - Smart Healthcare</title>
-    <!-- Google Fonts: Inter and Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert2 for beautiful popups -->
+    <title>Bệnh Nhân — Smart Healthcare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        title: ['Outfit', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800 font-sans">
+<body>
 
-    <!-- Sidebar Menu -->
-    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-6 border-r border-slate-800">
-        <div class="space-y-8">
-            <!-- Brand -->
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-sky-600 flex items-center justify-center text-white font-title font-bold text-lg shadow">S</div>
-                <span class="text-lg font-title font-bold tracking-tight text-white">Smart<span class="text-sky-500">Care</span></span>
-            </div>
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <a href="/" class="logo"><div class="logo-ic">S</div><span class="logo-tx">Smart<span>Healthcare</span></span></a>
+        <nav class="nav-menu">
+            <button onclick="switchTab('profileTab')" class="nav-btn active" id="btn-profileTab"><span class="nav-icon">👤</span> Hồ Sơ Cá Nhân</button>
+            <button onclick="switchTab('bookingTab')" class="nav-btn" id="btn-bookingTab"><span class="nav-icon">🗓️</span> Đặt Lịch & Cuộc Hẹn</button>
+            <button onclick="switchTab('historyTab')" class="nav-btn" id="btn-historyTab"><span class="nav-icon">📋</span> Lịch Sử Bệnh Án</button>
+        </nav>
+    </div>
+    <button onclick="logout()" class="logout-btn"><span class="nav-icon">🚪</span> Đăng Xuất</button>
+</aside>
 
-            <!-- Navigation Links -->
-            <nav class="space-y-1">
-                <button onclick="switchTab('profileTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-white bg-slate-800" id="btn-profileTab">
-                    👤 Hồ Sơ Cá Nhân
-                </button>
-                <button onclick="switchTab('bookingTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-slate-400" id="btn-bookingTab">
-                    🗓️ Đặt Lịch & Cuộc Hẹn
-                </button>
-                <button onclick="switchTab('historyTab')" class="tab-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all font-medium text-left text-sm text-slate-400" id="btn-historyTab">
-                    📋 Lịch Sử Bệnh Án
-                </button>
-            </nav>
+<!-- Main -->
+<main class="main">
+    <div class="welcome-bar">
+        <div class="welcome-info">
+            <h1>Xin chào, <span th:text="${profile.fullName}">Bệnh Nhân</span>!</h1>
+            <p>Chào mừng bạn quay lại Hệ thống Y tế số thông minh.</p>
         </div>
-
-        <!-- Logout Button -->
-        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-rose-950/30 hover:bg-rose-900 text-rose-400 hover:text-white transition-all font-semibold text-sm mt-8 border border-rose-900/30">
-            🚪 Đăng Xuất
-        </button>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow p-6 md:p-10 space-y-8 overflow-y-auto max-w-7xl mx-auto w-full">
-        
-        <!-- Welcome banner -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 md:p-8 rounded-xl text-slate-800 shadow-sm">
-            <div class="space-y-1">
-                <h1 class="text-2xl md:text-3xl font-title font-bold tracking-tight text-slate-900">Xin chào, <span th:text="${profile.fullName}" class="text-sky-600">Bệnh Nhân</span>!</h1>
-                <p class="text-slate-500 text-sm">Chào mừng bạn quay lại Hệ thống quản lý Y tế số thông minh.</p>
-            </div>
-            <button onclick="openBookingModal()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-sm transition-all hover:shadow text-sm">
-                📅 Đặt lịch khám mới
-            </button>
-        </header>
-
-        <!-- Dynamic Tabs -->
-        
-        <!-- 1. Profile Tab -->
-        <section id="profileTab" class="tab-content space-y-6">
-            <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-6">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                    <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">👤 Thông Tin Hồ Sơ Cá Nhân</h2>
-                    <span class="text-xs bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full font-bold border border-emerald-200">Đang hoạt động</span>
-                </div>
-
-                <form id="profileForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Họ và tên</label>
-                        <input type="text" id="profName" th:value="${profile.fullName}" required
-                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Số điện thoại</label>
-                        <input type="text" id="profPhone" th:value="${profile.phoneNumber}" required
-                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Ngày sinh</label>
-                        <input type="date" id="profDOB" th:value="${profile.dateOfBirth}"
-                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Giới tính</label>
-                        <select id="profGender"
-                                class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
-                            <option value="Nam" th:selected="${profile.gender == 'Nam'}">Nam</option>
-                            <option value="Nữ" th:selected="${profile.gender == 'Nữ'}">Nữ</option>
-                            <option value="Khác" th:selected="${profile.gender == 'Khác'}">Khác</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1 md:col-span-2">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Địa chỉ thường trú</label>
-                        <input type="text" id="profAddress" th:value="${profile.address}"
-                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 text-sm font-medium">
-                    </div>
-                    
-                    <div class="md:col-span-2 pt-2">
-                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-sm transition-all text-sm">
-                            💾 Lưu thay đổi hồ sơ
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- 2. Booking / Current Appointments Tab -->
-        <section id="bookingTab" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">🗓️ Lịch Hẹn Khám Bệnh Đã Đăng Ký</h2>
-                <button onclick="openBookingModal()" class="md:hidden bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow text-sm">Đặt lịch</button>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4">
-                <!-- Loop through appointments Thymeleaf -->
-                <div th:each="appt : ${appointments}" class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-sm transition-all">
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-sm font-bold text-slate-900" th:text="${appt.doctor.user.profile.fullName}">Bác Sĩ</span>
-                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-semibold border border-sky-100" th:text="${appt.doctor.specialty.name}">Chuyên Khoa</span>
-                        </div>
-                        <p class="text-slate-500 text-xs flex items-center gap-3 flex-wrap">
-                            <span class="flex items-center gap-1">📅 Ngày: <strong class="text-slate-700" th:text="${appt.appointmentDate}">18/05/2026</strong></span>
-                            <span class="flex items-center gap-1">⏰ Giờ: <strong class="text-slate-700" th:text="${appt.startTime + ' - ' + appt.endTime}">08:00 - 08:30</strong></span>
-                        </p>
-                        <p class="text-slate-600 text-sm" th:text="${appt.reason != null ? 'Lý do khám: ' + appt.reason : ''}">Lý do khám</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span th:if="${appt.status.name() == 'PENDING'}" class="text-xs bg-amber-50 text-amber-700 py-1 px-3 rounded-full font-bold border border-amber-200">Chờ Xác Nhận</span>
-                        <span th:if="${appt.status.name() == 'CONFIRMED'}" class="text-xs bg-sky-50 text-sky-700 py-1 px-3 rounded-full font-bold border border-sky-200">Đã Xác Nhận</span>
-                        <span th:if="${appt.status.name() == 'COMPLETED'}" class="text-xs bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full font-bold border border-emerald-200">Đã Hoàn Thành</span>
-                        
-                        <!-- Cancel Button if status is PENDING or CONFIRMED -->
-                        <button th:if="${appt.status.name() == 'PENDING' or appt.status.name() == 'CONFIRMED'}"
-                                th:data-id="${appt.id}"
-                                onclick="cancelAppointment(this)"
-                                class="bg-white hover:bg-rose-50 text-rose-600 border border-slate-300 hover:border-rose-300 text-xs font-bold py-2 px-4 rounded-lg transition-all shadow-sm">
-                            Hủy Lịch
-                        </button>
-                    </div>
-                </div>
-                
-                <div th:if="${appointments == null or appointments.isEmpty()}" class="bg-white p-8 text-center text-slate-400 rounded-xl border border-slate-200">
-                    Chưa có cuộc hẹn nào được đặt. Hãy bấm "Đặt lịch khám mới" để trải nghiệm dịch vụ.
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. Medical History Tab (CORE-07) -->
-        <section id="historyTab" class="tab-content hidden space-y-6">
-            <h2 class="text-xl font-title font-bold text-slate-900 flex items-center gap-2">📋 Lịch Sử Khám Bệnh & Kết Luận Toa Thuốc</h2>
-
-            <div class="space-y-6">
-                <!-- Loop through history -->
-                <div th:each="hist : ${history}" class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-6">
-                    
-                    <!-- Card Header -->
-                    <div class="flex justify-between items-start border-b border-slate-100 pb-4">
-                        <div class="space-y-1">
-                            <h3 class="text-lg font-bold text-slate-900" th:text="${'Bác sĩ chẩn đoán: ' + hist.doctorName}">Chẩn đoán bởi Bác Sĩ</h3>
-                            <p class="text-xs text-slate-400" th:text="${'Thời gian khám: ' + hist.appointmentDate}">Ngày khám</p>
-                        </div>
-                        <span class="text-xs bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full font-bold border border-emerald-200">Hoàn Thành Ca</span>
-                    </div>
-
-                    <!-- Symptoms & Diagnosis -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Triệu Chứng Lâm Sàng</h4>
-                            <p class="text-sm text-slate-700 font-medium" th:text="${hist.symptoms}">Triệu chứng bệnh</p>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Chẩn Đoán Kết Luận</h4>
-                            <p class="text-sm font-semibold text-sky-700" th:text="${hist.diagnosis}">Chẩn đoán y khoa</p>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 md:col-span-2">
-                            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Lời Khuyên & Dặn Dò Điều Trị</h4>
-                            <p class="text-sm text-slate-700 leading-relaxed" th:text="${hist.advice}">Dặn dò điều trị</p>
-                        </div>
-                    </div>
-
-                    <!-- Prescription details mapping -->
-                    <div class="space-y-3">
-                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Đơn Thuốc Được Kê</h4>
-                        <div class="overflow-x-auto border border-slate-200 rounded-lg">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-slate-50 text-xs font-semibold text-slate-500 uppercase border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">Tên thuốc</th>
-                                        <th class="p-3">Số lượng</th>
-                                        <th class="p-3">Liều dùng</th>
-                                        <th class="p-3 text-right">Đơn giá lịch sử</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="med : ${hist.medicines}" class="border-b border-slate-100 hover:bg-slate-50/50 transition-all">
-                                        <td class="p-3 font-semibold text-slate-800" th:text="${med.medicineName}">Tên thuốc</td>
-                                        <td class="p-3 text-slate-600" th:text="${med.quantity}">0</td>
-                                        <td class="p-3 text-slate-600" th:text="${med.dosageInstructions}">Cách uống</td>
-                                        <td class="p-3 text-right font-bold text-sky-600" th:text="${#numbers.formatDecimal(med.unitPrice, 1, 'DEFAULT', 0, 'DEFAULT') + ' đ'}">0 đ</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div th:if="${history == null or history.isEmpty()}" class="bg-white p-8 text-center text-slate-400 rounded-xl border border-slate-200">
-                    Không tìm thấy lịch sử khám bệnh nào trên tài khoản này.
-                </div>
-            </div>
-        </section>
-        
-    </main>
-
-    <!-- Booking Modal (CORE-05) -->
-    <div id="bookingModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-lg bg-white p-8 rounded-xl shadow-2xl border border-slate-200 space-y-6">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <h3 class="text-xl font-title font-bold text-slate-900">🗓️ Đăng Ký Lịch Hẹn Khám Bệnh Mới</h3>
-                <button onclick="closeBookingModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
-            </div>
-
-            <form id="bookingForm" class="space-y-4">
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chọn Chuyên Khoa</label>
-                    <select id="specialtySelect" required onchange="filterDoctorsBySpecialty()"
-                            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
-                        <option value="">-- Chọn chuyên khoa --</option>
-                        <option th:each="spec : ${specialties}" th:value="${spec.id}" th:text="${spec.name}">Chuyên khoa</option>
-                    </select>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chọn Bác Sĩ Khám</label>
-                    <select id="doctorSelect" required
-                            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
-                        <option value="">-- Vui lòng chọn chuyên khoa trước --</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Ngày khám</label>
-                        <input type="date" id="apptDate" required
-                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Giờ khám bắt đầu</label>
-                        <input type="time" id="apptTime" required
-                               class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500">
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Triệu chứng/Lý do khám bệnh</label>
-                    <textarea id="apptReason" rows="2"
-                              class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500" placeholder="Ví dụ: Đau đầu, ho sốt nhẹ từ tối qua..."></textarea>
-                </div>
-
-                <button type="submit" class="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg shadow-sm text-sm">
-                    🚀 Xác Nhận Đăng Ký Lịch Khám
-                </button>
-            </form>
-        </div>
+        <button onclick="openBookingModal()" class="btn-primary">📅 Đặt lịch khám mới</button>
     </div>
 
-    <!-- JS Controllers -->
-    <script th:inline="javascript">
-        // Danh sách bác sĩ từ Thymeleaf model sang JS
-        const allDoctors = /*[[${doctors}]]*/ [];
+    <!-- 1. Profile Tab -->
+    <section id="profileTab" class="tab-content active">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">👤 Thông Tin Hồ Sơ</h2>
+                <span class="badge badge-green">Đang hoạt động</span>
+            </div>
+            <form id="profileForm" class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" id="profName" th:value="${profile.fullName}" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" id="profPhone" th:value="${profile.phoneNumber}" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ngày sinh</label>
+                    <input type="date" id="profDOB" th:value="${profile.dateOfBirth}" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Giới tính</label>
+                    <select id="profGender" class="form-select">
+                        <option value="Nam" th:selected="${profile.gender == 'Nam'}">Nam</option>
+                        <option value="Nữ" th:selected="${profile.gender == 'Nữ'}">Nữ</option>
+                        <option value="Khác" th:selected="${profile.gender == 'Khác'}">Khác</option>
+                    </select>
+                </div>
+                <div class="form-group form-full">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text" id="profAddress" th:value="${profile.address}" class="form-input">
+                </div>
+                <div class="form-full" style="padding-top:4px">
+                    <button type="submit" class="btn-primary">💾 Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
+    <!-- 2. Booking Tab -->
+    <section id="bookingTab" class="tab-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 class="card-title">🗓️ Lịch Hẹn Đã Đăng Ký</h2>
+        </div>
+        <div th:each="appt : ${appointments}" class="appt-card">
+            <div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span class="appt-name" th:text="${appt.doctor.user.profile.fullName}">Bác Sĩ</span>
+                    <span class="badge badge-cyan" th:text="${appt.doctor.specialty.name}">Chuyên Khoa</span>
+                </div>
+                <div class="appt-meta">
+                    <span>📅 <strong th:text="${appt.appointmentDate}">18/05/2026</strong></span>
+                    <span>⏰ <strong th:text="${appt.startTime + ' - ' + appt.endTime}">08:00-08:30</strong></span>
+                </div>
+                <div class="appt-reason" th:text="${appt.reason != null ? 'Lý do: ' + appt.reason : ''}"></div>
+            </div>
+            <div class="appt-actions">
+                <span th:if="${appt.status.name() == 'PENDING'}" class="badge badge-amber">Chờ Xác Nhận</span>
+                <span th:if="${appt.status.name() == 'CONFIRMED'}" class="badge badge-cyan">Đã Xác Nhận</span>
+                <span th:if="${appt.status.name() == 'COMPLETED'}" class="badge badge-green">Hoàn Thành</span>
+                <button th:if="${appt.status.name() == 'PENDING' or appt.status.name() == 'CONFIRMED'}"
+                        th:data-id="${appt.id}" onclick="cancelAppointment(this)" class="btn-danger btn-sm">Hủy</button>
+            </div>
+        </div>
+        <div th:if="${appointments == null or appointments.isEmpty()}" class="empty">Chưa có cuộc hẹn nào. Hãy bấm "Đặt lịch khám mới".</div>
+    </section>
 
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-slate-800', 'text-white');
-            });
-            document.getElementById('btn-' + tabId).classList.add('bg-slate-800', 'text-white');
-        }
+    <!-- 3. History Tab -->
+    <section id="historyTab" class="tab-content">
+        <h2 class="card-title" style="margin-bottom:16px">📋 Lịch Sử Khám & Toa Thuốc</h2>
+        <div th:each="hist : ${history}" class="hist-card">
+            <div class="hist-header">
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:#fff" th:text="${'BS. ' + hist.doctorName}">Bác Sĩ</div>
+                    <div style="font-size:12px;color:var(--dim);margin-top:2px" th:text="${'Ngày khám: ' + hist.appointmentDate}">Ngày</div>
+                </div>
+                <span class="badge badge-green">Hoàn Thành</span>
+            </div>
+            <div class="hist-grid">
+                <div class="hist-block">
+                    <div class="hist-block-label">Triệu chứng</div>
+                    <div class="hist-block-val" th:text="${hist.symptoms}">Triệu chứng</div>
+                </div>
+                <div class="hist-block">
+                    <div class="hist-block-label">Chẩn đoán</div>
+                    <div class="hist-block-val diag" th:text="${hist.diagnosis}">Chẩn đoán</div>
+                </div>
+                <div class="hist-block full">
+                    <div class="hist-block-label">Lời dặn</div>
+                    <div class="hist-block-val" th:text="${hist.advice}">Lời dặn</div>
+                </div>
+            </div>
+            <div style="font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Đơn Thuốc</div>
+            <table class="tbl">
+                <thead><tr><th>Tên thuốc</th><th>Số lượng</th><th>Liều dùng</th><th style="text-align:right">Đơn giá</th></tr></thead>
+                <tbody>
+                    <tr th:each="med : ${hist.medicines}">
+                        <td class="bold" th:text="${med.medicineName}">Thuốc</td>
+                        <td th:text="${med.quantity}">0</td>
+                        <td th:text="${med.dosageInstructions}">Cách uống</td>
+                        <td class="price" style="text-align:right" th:text="${#numbers.formatDecimal(med.unitPrice, 1, 'DEFAULT', 0, 'DEFAULT') + ' đ'}">0đ</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${history == null or history.isEmpty()}" class="empty">Không tìm thấy lịch sử khám bệnh.</div>
+    </section>
+</main>
 
-        function openBookingModal() {
-            document.getElementById('bookingModal').classList.remove('hidden');
-        }
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="modal-title">🗓️ Đăng Ký Lịch Khám Mới</h3>
+            <button onclick="closeBookingModal()" class="modal-close">&times;</button>
+        </div>
+        <form id="bookingForm">
+            <div class="form-group">
+                <label class="form-label">Chọn Chuyên Khoa</label>
+                <select id="specialtySelect" required onchange="filterDoctorsBySpecialty()" class="form-select">
+                    <option value="">-- Chọn chuyên khoa --</option>
+                    <option th:each="spec : ${specialties}" th:value="${spec.id}" th:text="${spec.name}">CK</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Chọn Bác Sĩ</label>
+                <select id="doctorSelect" required class="form-select">
+                    <option value="">-- Chọn chuyên khoa trước --</option>
+                </select>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Ngày khám</label>
+                    <input type="date" id="apptDate" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Giờ bắt đầu</label>
+                    <input type="time" id="apptTime" required class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Triệu chứng / Lý do</label>
+                <textarea id="apptReason" rows="2" class="form-textarea" placeholder="Ví dụ: Đau đầu, ho sốt nhẹ..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;justify-content:center">🚀 Xác Nhận Đặt Lịch</button>
+        </form>
+    </div>
+</div>
 
-        function closeBookingModal() {
-            document.getElementById('bookingModal').classList.add('hidden');
-        }
+<script th:inline="javascript">
+    const allDoctors = /*[[${doctors}]]*/ [];
 
-        function filterDoctorsBySpecialty() {
-            const specId = document.getElementById('specialtySelect').value;
-            const docSelect = document.getElementById('doctorSelect');
-            
-            docSelect.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + tabId).classList.add('active');
+    }
 
-            if (!specId) return;
+    function openBookingModal() { document.getElementById('bookingModal').classList.remove('hidden'); }
+    function closeBookingModal() { document.getElementById('bookingModal').classList.add('hidden'); }
 
-            const filtered = allDoctors.filter(doc => doc.specialty && doc.specialty.id == specId);
-            filtered.forEach(doc => {
-                const opt = document.createElement('option');
-                opt.value = doc.userId;
-                opt.textContent = (doc.user && doc.user.profile) ? doc.user.profile.fullName : 'Bác sĩ';
-                docSelect.appendChild(opt);
-            });
-        }
-
-        // Đặt lịch (CORE-05)
-        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const doctorId = document.getElementById('doctorSelect').value;
-            const appointmentDate = document.getElementById('apptDate').value;
-            const startTime = document.getElementById('apptTime').value + ":00";
-            const reason = document.getElementById('apptReason').value;
-
-            // Tính toán endTime là 30 phút sau
-            const [hours, minutes] = startTime.split(':');
-            let endMin = parseInt(minutes) + 30;
-            let endHr = parseInt(hours);
-            if (endMin >= 60) {
-                endMin -= 60;
-                endHr += 1;
-            }
-            const endTime = `${String(endHr).padStart(2, '0')}:${String(endMin).padStart(2, '0')}:00`;
-
-            const token = getJwtFromCookie();
-
-            try {
-                const response = await fetch('/api/patient/appointments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({ doctorId, appointmentDate, startTime, endTime, reason })
-                });
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || 'Lịch khám giờ này của Bác sĩ đã có người đặt, vui lòng chọn giờ khác.');
-                }
-
-                Swal.fire({
-                    title: 'Thành công!',
-                    text: 'Đặt lịch khám thành công!',
-                    icon: 'success',
-                    confirmButtonColor: '#0284c7'
-                }).then(() => {
-                    location.reload();
-                });
-
-            } catch (err) {
-                Swal.fire({
-                    title: 'Thất bại',
-                    text: err.message,
-                    icon: 'error',
-                    confirmButtonColor: '#e11d48'
-                });
-            }
+    function filterDoctorsBySpecialty() {
+        const specId = document.getElementById('specialtySelect').value;
+        const docSelect = document.getElementById('doctorSelect');
+        docSelect.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
+        if (!specId) return;
+        allDoctors.filter(doc => doc.specialty && doc.specialty.id == specId).forEach(doc => {
+            const opt = document.createElement('option');
+            opt.value = doc.userId;
+            opt.textContent = (doc.user && doc.user.profile) ? doc.user.profile.fullName : 'Bác sĩ';
+            docSelect.appendChild(opt);
         });
+    }
 
-        // Hủy lịch (CORE-09)
-        async function cancelAppointment(btn) {
-            const apptId = btn.getAttribute('data-id');
-            const result = await Swal.fire({
-                title: 'Xác nhận hủy lịch?',
-                text: "Bạn có chắc chắn muốn hủy lịch khám này không? Slot giờ khám sẽ lập tức được giải phóng.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Đồng ý hủy',
-                cancelButtonText: 'Không, giữ lại'
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const doctorId = document.getElementById('doctorSelect').value;
+        const appointmentDate = document.getElementById('apptDate').value;
+        const startTime = document.getElementById('apptTime').value + ":00";
+        const reason = document.getElementById('apptReason').value;
+        const [hours, minutes] = startTime.split(':');
+        let endMin = parseInt(minutes) + 30, endHr = parseInt(hours);
+        if (endMin >= 60) { endMin -= 60; endHr += 1; }
+        const endTime = `${String(endHr).padStart(2,'0')}:${String(endMin).padStart(2,'0')}:00`;
+        const token = getJwtFromCookie();
+        try {
+            const res = await fetch('/api/patient/appointments', {
+                method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({doctorId, appointmentDate, startTime, endTime, reason})
             });
-
-            if (!result.isConfirmed) return;
-
-            const token = getJwtFromCookie();
-
-            try {
-                const response = await fetch('/api/patient/appointments/' + apptId, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Không thể hủy lịch khám.');
-                }
-
-                Swal.fire({
-                    title: 'Đã hủy!',
-                    text: 'Hủy lịch thành công! Khung giờ đã được mở khóa ngay lập tức.',
-                    icon: 'success',
-                    confirmButtonColor: '#0284c7'
-                }).then(() => {
-                    location.reload();
-                });
-
-            } catch (err) {
-                Swal.fire({
-                    title: 'Lỗi',
-                    text: err.message,
-                    icon: 'error',
-                    confirmButtonColor: '#e11d48'
-                });
-            }
+            if (!res.ok) { const d = await res.json(); throw new Error(d.message || 'Khung giờ đã có người đặt.'); }
+            Swal.fire({title:'Thành công!',text:'Đặt lịch thành công!',icon:'success',confirmButtonColor:'rgb(6,182,212)'}).then(() => location.reload());
+        } catch(err) {
+            Swal.fire({title:'Thất bại',text:err.message,icon:'error',confirmButtonColor:'rgb(6,182,212)'});
         }
+    });
 
-        // Cập nhật Hồ sơ cá nhân (CORE-03)
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fullName = document.getElementById('profName').value;
-            const phoneNumber = document.getElementById('profPhone').value;
-            const dateOfBirth = document.getElementById('profDOB').value;
-            const gender = document.getElementById('profGender').value;
-            const address = document.getElementById('profAddress').value;
-
-            const token = getJwtFromCookie();
-
-            try {
-                const response = await fetch('/api/profile', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({ fullName, phoneNumber, dateOfBirth, gender, address })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Lỗi cập nhật hồ sơ cá nhân.');
-                }
-
-                Swal.fire({
-                    title: 'Tuyệt vời!',
-                    text: 'Cập nhật hồ sơ thành công!',
-                    icon: 'success',
-                    confirmButtonColor: '#0284c7'
-                }).then(() => {
-                    location.reload();
-                });
-
-            } catch (err) {
-                Swal.fire({
-                    title: 'Lỗi cập nhật',
-                    text: err.message,
-                    icon: 'error',
-                    confirmButtonColor: '#e11d48'
-                });
-            }
-        });
-
-        function getJwtFromCookie() {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; jwt=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return '';
+    async function cancelAppointment(btn) {
+        const apptId = btn.getAttribute('data-id');
+        const r = await Swal.fire({title:'Xác nhận hủy?',text:'Slot giờ sẽ được giải phóng ngay.',
+            icon:'warning',showCancelButton:true,confirmButtonColor:'rgb(239,68,68)',cancelButtonColor:'#94a3b8',
+            confirmButtonText:'Đồng ý hủy',cancelButtonText:'Giữ lại'});
+        if (!r.isConfirmed) return;
+        const token = getJwtFromCookie();
+        try {
+            const res = await fetch('/api/patient/appointments/'+apptId, {method:'DELETE',headers:{'Authorization':'Bearer '+token}});
+            if (!res.ok) throw new Error('Không thể hủy.');
+            Swal.fire({title:'Đã hủy!',icon:'success',confirmButtonColor:'rgb(6,182,212)'}).then(() => location.reload());
+        } catch(err) {
+            Swal.fire({title:'Lỗi',text:err.message,icon:'error'});
         }
+    }
 
-        function logout() {
-            // Xóa cookie jwt
-            document.cookie = "jwt=; path=/; max-age=0";
-            window.location.href = '/login';
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = getJwtFromCookie();
+        try {
+            const res = await fetch('/api/profile', {method:'PUT',
+                headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({
+                    fullName: document.getElementById('profName').value,
+                    phoneNumber: document.getElementById('profPhone').value,
+                    dateOfBirth: document.getElementById('profDOB').value,
+                    gender: document.getElementById('profGender').value,
+                    address: document.getElementById('profAddress').value
+                })
+            });
+            if (!res.ok) throw new Error('Lỗi cập nhật.');
+            Swal.fire({title:'Đã lưu!',icon:'success',confirmButtonColor:'rgb(6,182,212)'}).then(() => location.reload());
+        } catch(err) {
+            Swal.fire({title:'Lỗi',text:err.message,icon:'error'});
         }
-    </script>
+    });
 
+    function getJwtFromCookie() {
+        const v = `; ${document.cookie}`;
+        const p = v.split(`; jwt=`);
+        if (p.length === 2) return p.pop().split(';').shift();
+        return '';
+    }
+    function logout() { document.cookie = "jwt=; path=/; max-age=0"; window.location.href = '/login'; }
+</script>
 </body>
 </html>

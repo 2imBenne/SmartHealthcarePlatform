@@ -31,7 +31,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 // Mở cửa cho Trang chủ, Đăng ký, Đăng nhập, Trang lỗi công cộng
-                .requestMatchers("/", "/login", "/register", "/error-page", "/error", "/api/auth/**", "/admin/dashboard").permitAll() 
+                .requestMatchers("/", "/login", "/register", "/error-page", "/error", "/api/auth/**").permitAll() 
                 
                 // CORE-02: KIỂM SOÁT TRUY CẬP CỨNG (Access Control)
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

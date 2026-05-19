@@ -19,10 +19,15 @@ public class MedicalService {
 
     // CORE-06: Đảm bảo ACID với @Transactional
     @Transactional(rollbackFor = Exception.class)
-    public void createMedicalRecordAndPrescription(CreateMedicalRecordRequest request) {
+    public void createMedicalRecordAndPrescription(CreateMedicalRecordRequest request, String doctorEmail) {
         // 1. Kiểm tra Lịch khám
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch khám"));
+
+        // BUG-09 FIX: Kiểm tra bác sĩ tạo bệnh án phải là bác sĩ được gán trong lịch hẹn
+        if (!appointment.getDoctor().getUser().getEmail().equals(doctorEmail)) {
+            throw new RuntimeException("Bạn không có quyền tạo bệnh án cho lịch khám này!");
+        }
         
         if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
             throw new RuntimeException("Chỉ được tạo bệnh án cho lịch khám đã xác nhận (CONFIRMED)");
