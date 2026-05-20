@@ -12,7 +12,6 @@ import java.util.List;
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long> {
 
     // CORE-07: Truy vấn phức tạp JOIN FETCH
-    // Kỹ thuật này gom 7 bảng lại thành 1 câu SQL duy nhất, giải quyết triệt để lỗi N+1 Query
     @Query("SELECT DISTINCT m FROM MedicalRecord m " +
            "JOIN FETCH m.appointment a " +
            "JOIN FETCH a.doctor d " +

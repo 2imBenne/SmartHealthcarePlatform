@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * DTO trả về thông tin người dùng cho Admin — không phơi bày Entity.
- */
 @Data
 @Builder
 @NoArgsConstructor

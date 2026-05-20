@@ -9,10 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controller tầng HTTP — chỉ nhận request, gọi Service và trả DTO.
- * KHÔNG trực tiếp chạm vào Entity, Repository hay business logic.
- */
 @RestController
 @RequestMapping("/api/patient/appointments")
 @RequiredArgsConstructor

@@ -29,10 +29,10 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Khong tim thay nguoi dung"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
 
         UserProfile profile = userProfileRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay ho so ca nhan"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ cá nhân."));
 
         return ResponseEntity.ok(mapToResponse(profile));
     }
@@ -44,10 +44,10 @@ public class UserProfileController {
             Authentication authentication) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Khong tim thay nguoi dung"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
 
         UserProfile profile = userProfileRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay ho so ca nhan"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ cá nhân."));
 
         profile.setFullName(request.getFullName());
         profile.setDateOfBirth(request.getDateOfBirth());

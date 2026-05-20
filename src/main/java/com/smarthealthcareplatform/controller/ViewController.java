@@ -10,10 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-/**
- * BUG-05 FIX: Controller chỉ gọi Service, KHÔNG inject Repository trực tiếp.
- * Tuân thủ mô hình 3 lớp: Controller → Service → Repository.
- */
 @Controller
 @RequiredArgsConstructor
 public class ViewController {
@@ -46,7 +42,6 @@ public class ViewController {
                     }
                     model.addAttribute("dashboardUrl", dashboardUrl);
                 } catch (Exception e) {
-                    // Bỏ qua nếu không tải được profile
                 }
             }
         }

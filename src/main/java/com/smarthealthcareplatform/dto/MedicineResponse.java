@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * BUG-06 FIX: DTO trả về thông tin thuốc — không phơi bày Entity.
- */
 @Data
 @Builder
 @NoArgsConstructor

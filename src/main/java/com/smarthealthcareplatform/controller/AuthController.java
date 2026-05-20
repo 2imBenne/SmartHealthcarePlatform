@@ -61,7 +61,7 @@ public class AuthController {
         String token = extractTokenFromCookies(request);
         authService.logout(token);
         clearJwtCookie(response);
-        return ResponseEntity.ok(new AuthResponse(null, "Dang xuat thanh cong", null));
+        return ResponseEntity.ok(new AuthResponse(null, "Đăng xuất thành công", null));
     }
 
     private void addJwtCookie(HttpServletResponse response, String token) {

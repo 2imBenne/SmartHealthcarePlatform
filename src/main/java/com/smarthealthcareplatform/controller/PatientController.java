@@ -30,10 +30,10 @@ public class PatientController {
             @PathVariable Long patientId, Authentication authentication) {
 
         User currentUser = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay tai khoan"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
 
         if (!currentUser.getId().equals(patientId)) {
-            throw new RuntimeException("Ban khong co quyen xem lich su benh an cua nguoi khac!");
+            throw new RuntimeException("Bạn không có quyền xem lịch sử bệnh án của người khác!");
         }
 
         return ResponseEntity.ok(patientService.getPatientHistory(patientId));

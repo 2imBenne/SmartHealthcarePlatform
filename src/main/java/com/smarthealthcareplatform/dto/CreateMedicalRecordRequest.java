@@ -9,6 +9,6 @@ public class CreateMedicalRecordRequest {
     private String symptoms;
     private String diagnosis;
     private String advice;
-    // DTO con chứa danh sách thuốc kê đơn
+
     private List<PrescriptionItemRequest> prescriptionItems;
 }

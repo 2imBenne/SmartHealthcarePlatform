@@ -43,15 +43,15 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (request.getRole() == null || request.getRole() == Role.ADMIN) {
-            throw new RuntimeException("Khong duoc phep dang ky voi vai tro ADMIN");
+            throw new RuntimeException("Không được phép đăng ký với vai trò ADMIN");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email da duoc su dung");
+            throw new RuntimeException("Email đã được sử dụng");
         }
 
         if (request.getPhoneNumber() != null && userProfileRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new RuntimeException("So dien thoai da duoc su dung");
+            throw new RuntimeException("Số điện thoại đã được sử dụng");
         }
 
         boolean isDoctor = request.getRole() == Role.DOCTOR;
@@ -78,14 +78,14 @@ public class AuthService {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String jwtToken = jwtService.generateToken(userDetails);
-        return new AuthResponse(jwtToken, "Dang ky thanh cong", "ROLE_" + user.getRole().name());
+        return new AuthResponse(jwtToken, "Đăng ký thành công", "ROLE_" + user.getRole().name());
     }
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (isLocked(user)) {
-            throw new LockedException("Tai khoan tam khoa den " + user.getAccountLockedUntil());
+            throw new LockedException("Tài khoản tạm khóa đến " + user.getAccountLockedUntil());
         }
 
         try {
@@ -95,18 +95,18 @@ public class AuthService {
         } catch (AuthenticationException ex) {
             boolean locked = handleFailedLogin(user);
             if (locked && user != null && user.getAccountLockedUntil() != null) {
-                throw new LockedException("Tai khoan tam khoa den " + user.getAccountLockedUntil());
+                throw new LockedException("Tài khoản tạm khóa đến " + user.getAccountLockedUntil());
             }
-            throw new BadCredentialsException("Ten dang nhap hoac mat khau khong chinh xac");
+            throw new BadCredentialsException("Tên đăng nhập hoặc mật khẩu không chính xác");
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String jwtToken = jwtService.generateToken(userDetails);
 
         User existing = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Nguoi dung khong ton tai"));
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại."));
         clearFailedLogin(existing);
-        return new AuthResponse(jwtToken, "Dang nhap thanh cong", "ROLE_" + existing.getRole().name());
+        return new AuthResponse(jwtToken, "Đăng nhập thành công", "ROLE_" + existing.getRole().name());
     }
 
     public void logout(String token) {

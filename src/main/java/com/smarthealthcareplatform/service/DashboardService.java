@@ -9,10 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * BUG-05 FIX: Service tổng hợp dữ liệu cho ViewController.
- * Chuyển logic từ Controller xuống đây để tuân thủ 3-layer architecture.
- */
 @Service
 @RequiredArgsConstructor
 public class DashboardService {

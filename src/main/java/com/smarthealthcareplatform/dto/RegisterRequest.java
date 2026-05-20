@@ -23,5 +23,5 @@ public class RegisterRequest {
     private String phoneNumber;
 
     @NotNull(message = "Vai trò không được để trống")
-    private Role role; // PATIENT, DOCTOR (ADMIN bị chặn ở Service)
+    private Role role;
 }

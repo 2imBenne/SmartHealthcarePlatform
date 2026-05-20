@@ -36,12 +36,11 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bác sĩ với ID: " + request.getDoctorId()));
 
-        // 2. Logic mềm: Không cho đặt lịch trong quá khứ
         if (request.getAppointmentDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("Không thể đặt lịch khám cho một ngày trong quá khứ.");
         }
 
-        // 3. Build Entity và lưu (toàn bộ xảy ra trong tầng Service)
+        // Build Entity và lưu (toàn bộ xảy ra trong tầng Service)
         Appointment appointment = Appointment.builder()
                 .patient(patient)
                 .doctor(doctor)
@@ -52,7 +51,6 @@ public class AppointmentService {
                 .status(AppointmentStatus.PENDING)
                 .build();
 
-        // 4. Logic cứng: UNIQUE KEY ở DB sẽ vi phạm nếu cùng bác sĩ, cùng giờ
         try {
             appointment = appointmentRepository.save(appointment);
         } catch (DataIntegrityViolationException ex) {
@@ -106,7 +104,6 @@ public class AppointmentService {
         appointmentRepository.delete(appointment);
     }
 
-    // Helper: Map Entity -> DTO (KHÔNG để Entity ra ngoài Service boundary)
     private AppointmentResponse mapToResponse(Appointment a) {
         String doctorName = (a.getDoctor() != null && a.getDoctor().getUser() != null
                 && a.getDoctor().getUser().getProfile() != null)

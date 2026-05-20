@@ -9,8 +9,8 @@ import java.time.LocalDate;
 public class UserProfileRequest {
     private String fullName;
 
-    @NotNull(message = "Ngay sinh khong duoc de trong")
-    @Past(message = "Ngay sinh phai la ngay trong qua khu")
+    @NotNull(message = "Ngày sinh không được để trống")
+    @Past(message = "Ngày sinh phải là ngày trong quá khứ")
     private LocalDate dateOfBirth;
 
     private String gender;

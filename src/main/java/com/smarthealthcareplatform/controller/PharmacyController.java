@@ -21,6 +21,6 @@ public class PharmacyController {
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<String> dispensePrescription(@PathVariable Long prescriptionId) {
         medicalService.dispensePrescription(prescriptionId);
-        return ResponseEntity.ok("Cap phat thuoc thanh cong, da tru ton kho (Pessimistic Lock applied).");
+        return ResponseEntity.ok("Cấp phát thuốc thành công");
     }
 }

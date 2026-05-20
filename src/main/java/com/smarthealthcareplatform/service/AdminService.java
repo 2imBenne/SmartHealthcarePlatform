@@ -91,7 +91,7 @@ public class AdminService {
         return mapToResponse(user);
     }
 
-    // Cập nhật vai trò (PATIENT ↔ DOCTOR). Không cho phép đổi sang ADMIN.
+    // Cập nhật vai trò (PATIENT <-> DOCTOR). Không cho phép đổi sang ADMIN.
     @Transactional
     public UserResponse updateUserRole(Long userId, String newRole) {
         User user = userRepository.findById(userId)
@@ -157,7 +157,7 @@ public class AdminService {
         }
     }
 
-    // Mapper Entity → DTO
+    // Mapper Entity -> DTO
     private UserResponse mapToResponse(User user) {
         UserProfile profile = userProfileRepository.findById(user.getId()).orElse(null);
 

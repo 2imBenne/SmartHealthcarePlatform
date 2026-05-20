@@ -48,6 +48,6 @@ public class MedicineController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMedicine(@PathVariable Long id) {
         medicineService.deleteMedicine(id);
-        return ResponseEntity.ok("Da chuyen thuoc vao trang thai Ngung Ban (Xoa mem).");
+        return ResponseEntity.ok("Đã chuyển thuốc vào trạng thái ngừng bán.");
     }
 }

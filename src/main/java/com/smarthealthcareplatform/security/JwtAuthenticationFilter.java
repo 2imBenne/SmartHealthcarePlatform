@@ -53,8 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception e) {
-                // BUG-04 FIX: Token hỏng/hết hạn → tiếp tục như anonymous user, KHÔNG crash 500
-                // Log lỗi để debug nhưng không ném exception ra ngoài
                 System.out.println("⚠️ JWT không hợp lệ: " + e.getMessage());
             }
         }

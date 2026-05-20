@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-/**
- * BUG-07 FIX: DTO trả về hồ sơ cá nhân — không phơi bày Entity.
- */
 @Data
 @Builder
 @NoArgsConstructor
