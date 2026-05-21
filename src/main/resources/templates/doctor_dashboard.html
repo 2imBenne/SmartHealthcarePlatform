@@ -8,26 +8,61 @@
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .week-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-        .range-controls{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
-        .range-item{display:flex;flex-direction:column;gap:4px}
-        .range-item label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-        .range-item input{min-width:150px}
-        .week-range{font-size:13px;color:var(--dim);font-weight:600}
-        .week-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding-bottom:4px}
-        .day-col{background:var(--bg2);border:1px solid var(--border);border-radius:12px;min-height:220px;display:flex;flex-direction:column}
-        .day-head{padding:10px 12px;border-bottom:1px solid var(--border);background:var(--surface2)}
-        .day-name{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
-        .day-date{font-size:13px;color:var(--text);font-weight:700;margin-top:2px}
-        .day-head.today{background:rgba(var(--c),.12);border-bottom-color:rgba(var(--c),.24)}
-        .day-body{padding:10px;display:flex;flex-direction:column;gap:8px}
-        .mini-card{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg2)}
-        .mini-name{font-size:13px;font-weight:700;color:var(--text)}
-        .mini-meta{font-size:12px;color:var(--dim);margin-top:4px;display:flex;flex-direction:column;gap:2px}
-        .mini-reason{font-size:12px;color:var(--dim);margin-top:6px}
-        .mini-actions{margin-top:8px;display:flex;justify-content:flex-end}
-        .mini-empty{font-size:12px;color:var(--muted);padding:8px;border:1px dashed var(--border);border-radius:8px;text-align:center}
+        /* === STATS BAR === */
+        .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+        .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);transition:all .2s}
+        .stat-card:hover{box-shadow:var(--shadow-lg)}
+        .stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+        .stat-icon.cyan{background:rgba(var(--c),.1);color:rgb(var(--c))}
+        .stat-icon.green{background:rgba(var(--g),.1);color:rgb(var(--g))}
+        .stat-icon.amber{background:rgba(var(--am),.1);color:rgb(var(--am))}
+        .stat-num{font-family:'Outfit',sans-serif;font-weight:800;font-size:26px;color:var(--text);line-height:1}
+        .stat-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+
+        /* === DATE FILTER === */
+        .date-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+        .date-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+        .filter-btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;transition:all .2s;font-family:'Be Vietnam Pro',sans-serif}
+        .filter-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
+        .filter-btn.active{background:rgba(var(--c),.1);color:rgb(8,145,178);border-color:rgba(var(--c),.3);font-weight:700}
+        .date-input-wrap{display:flex;align-items:center;gap:8px}
+        .date-input-wrap input{min-width:160px}
+        .current-date-label{font-size:14px;font-weight:700;color:var(--text)}
+
+        /* === DAY GROUP === */
+        .day-group{margin-bottom:20px}
+        .day-group-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+        .day-group-title{font-size:14px;font-weight:700;color:var(--text)}
+        .day-group-title.today-title{color:rgb(8,145,178)}
+        .day-group-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px}
+
+        /* === TIMELINE CARD === */
+        .timeline-card{display:flex;align-items:stretch;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow);transition:all .2s;overflow:hidden}
+        .timeline-card:hover{box-shadow:var(--shadow-lg);border-color:rgba(var(--c),.3)}
+        .timeline-time{width:100px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;background:var(--surface2);border-right:1px solid var(--border);gap:2px}
+        .timeline-time.today-time{background:rgba(var(--c),.08)}
+        .timeline-start{font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;color:var(--text);line-height:1}
+        .timeline-end{font-size:11px;color:var(--muted);font-weight:600}
+        .timeline-sep{font-size:10px;color:var(--muted)}
+        .timeline-body{flex:1;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+        .timeline-info{flex:1;min-width:0}
+        .timeline-patient{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .timeline-details{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-bottom:4px}
+        .timeline-details span{display:flex;align-items:center;gap:4px}
+        .timeline-reason{font-size:12px;color:var(--muted);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:400px}
+        .timeline-action{flex-shrink:0}
+        .timeline-date-badge{display:inline-flex;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
+
+        .empty-day{text-align:center;padding:24px;color:var(--muted);font-size:13px;background:var(--surface2);border:1px dashed var(--border);border-radius:12px}
         .hidden{display:none}
+
+        @media(max-width:768px){
+            .stats-row{grid-template-columns:1fr}
+            .timeline-card{flex-direction:column}
+            .timeline-time{width:100%;flex-direction:row;padding:10px 14px;border-right:none;border-bottom:1px solid var(--border)}
+            .timeline-body{flex-direction:column;align-items:flex-start}
+            .timeline-reason{white-space:normal;max-width:100%}
+        }
     </style>
 </head>
 <body>
@@ -54,41 +89,49 @@
     </div>
 
     <section id="waitingListTab" class="tab-content active">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-            <h2 class="card-title">📅 Lịch Khám & Chờ Khám</h2>
-            <span class="badge badge-cyan">Đã xác nhận</span>
-        </div>
-        <div class="week-toolbar">
-            <div class="range-controls">
-                <div class="range-item">
-                    <label for="rangeStartDate">Từ ngày</label>
-                    <input type="date" id="rangeStartDate" class="form-input">
-                </div>
-                <div class="range-item">
-                    <label for="rangeEndDate">Đến ngày</label>
-                    <input type="date" id="rangeEndDate" class="form-input">
-                </div>
-                <button class="btn-primary btn-sm" onclick="applyDateRange()">Xem lịch</button>
-                <button class="btn-ghost btn-sm" onclick="setDefaultRange()">Mặc định 7 ngày</button>
+        <!-- Stats Bar -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon cyan">📅</div>
+                <div><div class="stat-num" id="statToday">0</div><div class="stat-label">Lịch hẹn hôm nay</div></div>
             </div>
-            <div id="weekRangeLabel" class="week-range"></div>
+            <div class="stat-card">
+                <div class="stat-icon green">📋</div>
+                <div><div class="stat-num" id="statWeek">0</div><div class="stat-label">Tuần này (7 ngày)</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber">⏳</div>
+                <div><div class="stat-num" id="statPending" th:text="${pendingAppointments != null ? pendingAppointments.size() : 0}">0</div><div class="stat-label">Chờ duyệt</div></div>
+            </div>
         </div>
-        <div id="weeklyCalendar" class="week-grid"></div>
-        <div id="emptyWeekState" class="empty hidden">Không có lịch chờ khám trong tuần này.</div>
 
+        <!-- Date Filter Toolbar -->
+        <div class="date-toolbar">
+            <div class="date-filters">
+                <button class="filter-btn active" id="filterToday" onclick="filterView('today')">Hôm nay</button>
+                <button class="filter-btn" id="filterTomorrow" onclick="filterView('tomorrow')">Ngày mai</button>
+                <button class="filter-btn" id="filterWeek" onclick="filterView('week')">Tuần này</button>
+                <div class="date-input-wrap">
+                    <input type="date" id="filterDateInput" class="form-input" onchange="filterView('custom')">
+                </div>
+            </div>
+            <div class="current-date-label" id="currentDateLabel"></div>
+        </div>
+
+        <!-- Timeline Container -->
+        <div id="timelineContainer"></div>
+        <div id="emptyState" class="empty hidden">Không có lịch hẹn nào trong khoảng thời gian này.</div>
+
+        <!-- Hidden data source from Thymeleaf -->
         <div id="confirmedSource" class="hidden">
-            <div th:each="appt : ${confirmedAppointments}" class="mini-card" th:data-appt-date="${appt.appointmentDate}">
-                <div class="mini-name" th:text="${appt.patient.profile.fullName}">Bệnh nhân</div>
-                <div class="mini-meta">
-                    <span th:text="${'Giờ: ' + appt.startTime + ' - ' + appt.endTime}">Giờ</span>
-                    <span th:text="${'SĐT: ' + appt.patient.profile.phoneNumber}">SĐT</span>
-                </div>
-                <div class="mini-reason" th:text="${'Triệu chứng: ' + appt.reason}">Triệu chứng</div>
-                <div class="mini-actions">
-                    <button th:data-id="${appt.id}"
-                            th:data-name="${appt.patient != null && appt.patient.profile != null ? appt.patient.profile.fullName : ''}"
-                            onclick="openExamModal(this)" class="btn-primary btn-sm start-exam-btn">Bắt đầu khám</button>
-                </div>
+            <div th:each="appt : ${confirmedAppointments}" class="source-card"
+                 th:data-id="${appt.id}"
+                 th:data-date="${appt.appointmentDate}"
+                 th:data-start="${appt.startTime}"
+                 th:data-end="${appt.endTime}"
+                 th:data-name="${appt.patient.profile.fullName}"
+                 th:data-phone="${appt.patient.profile.phoneNumber}"
+                 th:data-reason="${appt.reason}">
             </div>
         </div>
     </section>
@@ -179,26 +222,13 @@
 
 <script th:inline="javascript">
     const allMedicines = /*[[${medicines}]]*/ [];
-    let rangeStart = null;
-    let rangeEnd = null;
 
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('btn-' + tabId).classList.add('active');
-    }
-
+    // === Utility functions ===
     function localIso(date) {
         const y = date.getFullYear();
         const m = String(date.getMonth() + 1).padStart(2, '0');
         const d = String(date.getDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
-    }
-
-    function parseIsoDate(iso) {
-        const [y, m, d] = iso.split('-').map(Number);
-        return new Date(y, m - 1, d);
     }
 
     function addDays(base, days) {
@@ -207,97 +237,189 @@
         return d;
     }
 
-    function setDefaultRange() {
-        const today = new Date();
-        const end = addDays(today, 6);
-        document.getElementById('rangeStartDate').value = localIso(today);
-        document.getElementById('rangeEndDate').value = localIso(end);
-        applyDateRange();
+    function formatTime(timeStr) {
+        if (!timeStr) return '';
+        return timeStr.substring(0, 5);
     }
 
-    function applyDateRange() {
-        const startVal = document.getElementById('rangeStartDate').value;
-        const endVal = document.getElementById('rangeEndDate').value;
-        if (!startVal || !endVal) {
-            Swal.fire({title:'Thieu du lieu',text:'Vui long chon day du Tu ngay va Den ngay.',icon:'warning',confirmButtonColor:'rgb(6,182,212)'});
-            return;
-        }
-        const start = parseIsoDate(startVal);
-        const end = parseIsoDate(endVal);
-        if (end < start) {
-            Swal.fire({title:'Khoang ngay khong hop le',text:'Den ngay phai lon hon hoac bang Tu ngay.',icon:'warning',confirmButtonColor:'rgb(6,182,212)'});
-            return;
-        }
-        const diffDays = Math.floor((end - start) / 86400000) + 1;
-        if (diffDays > 7) {
-            Swal.fire({title:'Vuot gioi han 7 ngay',text:'Chi duoc xem lich trong khoang toi da 7 ngay.',icon:'warning',confirmButtonColor:'rgb(6,182,212)'});
-            return;
-        }
-        rangeStart = start;
-        rangeEnd = end;
-        renderCalendarByRange();
+    function formatDateVN(dateStr) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        const date = new Date(y, m - 1, d);
+        const dayNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+        return `${dayNames[date.getDay()]}, ${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
     }
 
-    function renderCalendarByRange() {
-        const calendar = document.getElementById('weeklyCalendar');
-        const sourceCards = Array.from(document.querySelectorAll('#confirmedSource .mini-card'));
-        const emptyState = document.getElementById('emptyWeekState');
-        const weekRangeLabel = document.getElementById('weekRangeLabel');
-        const today = new Date();
-        const todayIso = localIso(today);
-        const dayNames = ['Chu nhat', 'Thu 2', 'Thu 3', 'Thu 4', 'Thu 5', 'Thu 6', 'Thu 7'];
-        const dayMap = {};
-        const dayDates = [];
-        let html = '';
-        const totalDays = Math.floor((rangeEnd - rangeStart) / 86400000) + 1;
+    // === Parse source data from Thymeleaf hidden div ===
+    function getSourceCards() {
+        return Array.from(document.querySelectorAll('#confirmedSource .source-card')).map(el => ({
+            id: el.dataset.id,
+            date: el.dataset.date,
+            start: el.dataset.start,
+            end: el.dataset.end,
+            name: el.dataset.name,
+            phone: el.dataset.phone,
+            reason: el.dataset.reason
+        }));
+    }
 
-        for (let i = 0; i < totalDays; i++) {
-            const day = addDays(rangeStart, i);
-            const iso = localIso(day);
-            dayDates.push(day);
-            dayMap[iso] = [];
-            const isToday = iso === todayIso ? 'today' : '';
-            html += `<div class="day-col"><div class="day-head ${isToday}"><div class="day-name">${dayNames[day.getDay()]}</div><div class="day-date">${iso}</div></div><div class="day-body" data-day="${iso}"></div></div>`;
+    // === Tab switching ===
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + tabId).classList.add('active');
+    }
+
+    // === Calculate stats ===
+    function updateStats() {
+        const cards = getSourceCards();
+        const todayIso = localIso(new Date());
+        const weekEnd = localIso(addDays(new Date(), 6));
+
+        const todayCount = cards.filter(c => c.date === todayIso).length;
+        const weekCount = cards.filter(c => c.date >= todayIso && c.date <= weekEnd).length;
+
+        document.getElementById('statToday').textContent = todayCount;
+        document.getElementById('statWeek').textContent = weekCount;
+    }
+
+    // === Filter view ===
+    let currentFilter = 'today';
+
+    function filterView(mode) {
+        currentFilter = mode;
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        if (mode === 'today') document.getElementById('filterToday').classList.add('active');
+        else if (mode === 'tomorrow') document.getElementById('filterTomorrow').classList.add('active');
+        else if (mode === 'week') document.getElementById('filterWeek').classList.add('active');
+
+        const today = new Date();
+        let startDate, endDate;
+
+        if (mode === 'today') {
+            startDate = endDate = localIso(today);
+            document.getElementById('filterDateInput').value = '';
+        } else if (mode === 'tomorrow') {
+            startDate = endDate = localIso(addDays(today, 1));
+            document.getElementById('filterDateInput').value = '';
+        } else if (mode === 'week') {
+            startDate = localIso(today);
+            endDate = localIso(addDays(today, 6));
+            document.getElementById('filterDateInput').value = '';
+        } else if (mode === 'custom') {
+            const val = document.getElementById('filterDateInput').value;
+            if (!val) return;
+            startDate = endDate = val;
         }
 
-        sourceCards.forEach(card => {
-            const date = card.getAttribute('data-appt-date');
-            if (date in dayMap) {
-                const clone = card.cloneNode(true);
-                const btn = clone.querySelector('.start-exam-btn');
-                if (date !== todayIso) {
-                    btn.disabled = true;
-                    btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-ghost');
-                    btn.textContent = 'Chi kham trong ngay';
-                    btn.removeAttribute('onclick');
-                }
-                dayMap[date].push(clone);
-            }
+        renderTimeline(startDate, endDate);
+    }
+
+    // === Render Timeline ===
+    function renderTimeline(startDate, endDate) {
+        const container = document.getElementById('timelineContainer');
+        const emptyState = document.getElementById('emptyState');
+        const dateLabel = document.getElementById('currentDateLabel');
+        const cards = getSourceCards();
+        const todayIso = localIso(new Date());
+
+        // Filter cards within date range
+        const filtered = cards.filter(c => c.date >= startDate && c.date <= endDate);
+
+        // Group by date
+        const grouped = {};
+        filtered.forEach(c => {
+            if (!grouped[c.date]) grouped[c.date] = [];
+            grouped[c.date].push(c);
         });
 
-        calendar.innerHTML = html;
-        let hasAny = false;
-        Object.keys(dayMap).forEach(date => {
-            const body = calendar.querySelector(`[data-day="${date}"]`);
-            const cards = dayMap[date];
-            if (cards.length === 0) {
-                body.innerHTML = '<div class="mini-empty">Khong co lich</div>';
+        // Sort each group by start time
+        Object.keys(grouped).forEach(date => {
+            grouped[date].sort((a, b) => a.start.localeCompare(b.start));
+        });
+
+        // Sort dates
+        const sortedDates = Object.keys(grouped).sort();
+
+        if (sortedDates.length === 0) {
+            container.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            if (startDate === endDate) {
+                dateLabel.textContent = formatDateVN(startDate);
             } else {
-                hasAny = true;
-                cards.forEach(c => body.appendChild(c));
+                dateLabel.textContent = `${formatDateVN(startDate)} — ${formatDateVN(endDate)}`;
+            }
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+
+        // Update date label
+        if (startDate === endDate) {
+            dateLabel.textContent = formatDateVN(startDate);
+        } else {
+            dateLabel.textContent = `${formatDateVN(startDate)} — ${formatDateVN(endDate)}`;
+        }
+
+        let html = '';
+        const showMultipleDays = startDate !== endDate;
+
+        sortedDates.forEach(date => {
+            const appts = grouped[date];
+            const isToday = date === todayIso;
+
+            if (showMultipleDays) {
+                const titleClass = isToday ? 'day-group-title today-title' : 'day-group-title';
+                const badgeHtml = isToday ? '<span class="day-group-badge badge-cyan">Hôm nay</span>' : '';
+                html += `<div class="day-group">
+                    <div class="day-group-header">
+                        <div class="${titleClass}">${formatDateVN(date)}</div>
+                        ${badgeHtml}
+                        <span class="day-group-badge badge-green">${appts.length} lịch hẹn</span>
+                    </div>`;
+            }
+
+            appts.forEach(appt => {
+                const timeClass = isToday ? 'timeline-time today-time' : 'timeline-time';
+                const actionHtml = isToday
+                    ? `<button data-id="${appt.id}" data-name="${appt.name}" onclick="openExamModal(this)" class="btn-primary btn-sm">Bắt đầu khám</button>`
+                    : `<span class="timeline-date-badge">${formatDateVN(appt.date).split(',')[0]}</span>`;
+
+                html += `<div class="timeline-card">
+                    <div class="${timeClass}">
+                        <span class="timeline-start">${formatTime(appt.start)}</span>
+                        <span class="timeline-sep">đến</span>
+                        <span class="timeline-end">${formatTime(appt.end)}</span>
+                    </div>
+                    <div class="timeline-body">
+                        <div class="timeline-info">
+                            <div class="timeline-patient">${appt.name}</div>
+                            <div class="timeline-details">
+                                <span>📞 ${appt.phone || 'Chưa có SĐT'}</span>
+                            </div>
+                            <div class="timeline-reason">Triệu chứng: ${appt.reason || 'Không ghi nhận'}</div>
+                        </div>
+                        <div class="timeline-action">${actionHtml}</div>
+                    </div>
+                </div>`;
+            });
+
+            if (showMultipleDays) {
+                html += `</div>`;
             }
         });
 
-        emptyState.classList.toggle('hidden', hasAny);
-        const first = dayDates[0];
-        const last = dayDates[6];
-        weekRangeLabel.textContent = `Dang xem: ${localIso(first)} den ${localIso(last)} (${totalDays} ngay)`;
+        container.innerHTML = html;
     }
 
+    // === Modal functions ===
     function openExamModal(btn) {
         document.getElementById('apptIdInput').value = btn.getAttribute('data-id');
         document.getElementById('patientNameLabel').textContent = btn.getAttribute('data-name');
+        document.getElementById('symptomsInput').value = '';
+        document.getElementById('diagnosisInput').value = '';
+        document.getElementById('adviceInput').value = '';
         document.getElementById('prescriptionRows').innerHTML = '';
         addMedicineRow();
         document.getElementById('examModal').classList.remove('hidden');
@@ -321,6 +443,7 @@
         c.appendChild(row);
     }
 
+    // === Form submit: Create medical record ===
     document.getElementById('examForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const prescriptionItems = [];
@@ -349,35 +472,38 @@
         }
     });
 
+    // === Confirm appointment ===
     async function confirmAppointment(btn) {
         const id = btn.getAttribute('data-id');
         const r = await Swal.fire({
-            title: 'Duyệt lịch?',
+            title: 'Duyệt lịch hẹn?',
+            text: 'Xác nhận duyệt lịch hẹn này cho bệnh nhân.',
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: 'rgb(16,185,129)',
             cancelButtonColor: '#94a3b8',
-            confirmButtonText: 'Đồng ý',
+            confirmButtonText: 'Đồng ý duyệt',
             cancelButtonText: 'Hủy'
         });
         if (!r.isConfirmed) return;
         try {
             const res = await fetch('/api/doctor/appointments/' + id + '/confirm', { method: 'PUT' });
-            if (!res.ok) throw new Error('Không thể duyệt.');
-            Swal.fire({ title: 'Đã duyệt', icon: 'success', confirmButtonColor: 'rgb(6,182,212)' }).then(() => location.reload());
+            if (!res.ok) throw new Error('Không thể duyệt lịch hẹn.');
+            Swal.fire({ title: 'Đã duyệt thành công!', icon: 'success', confirmButtonColor: 'rgb(6,182,212)' }).then(() => location.reload());
         } catch (err) {
             Swal.fire({ title: 'Lỗi', text: err.message, icon: 'error' });
         }
     }
 
+    // === Dispense prescription ===
     async function dispensePrescription(btn) {
         const id = btn.getAttribute('data-id');
         const r = await Swal.fire({
             title: 'Cấp phát thuốc?',
-            text: 'Hệ thống sẽ tự động trừ tồn kho',
+            text: 'Hệ thống sẽ tự động trừ tồn kho sau khi cấp phát.',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Cấp phát',
+            confirmButtonText: 'Xác nhận cấp phát',
             cancelButtonText: 'Hủy',
             confirmButtonColor: 'rgb(16,185,129)',
             cancelButtonColor: '#94a3b8'
@@ -385,19 +511,22 @@
         if (!r.isConfirmed) return;
         try {
             const res = await fetch('/api/pharmacy/prescriptions/' + id + '/dispense', { method: 'POST' });
-            if (!res.ok) throw new Error('Tồn kho không đủ hoặc đơn không hợp lệ.');
-            Swal.fire({ title: 'Cấp phát thành công', icon: 'success', confirmButtonColor: 'rgb(6,182,212)' }).then(() => location.reload());
+            if (!res.ok) throw new Error('Tồn kho không đủ hoặc đơn thuốc không hợp lệ.');
+            Swal.fire({ title: 'Cấp phát thành công!', icon: 'success', confirmButtonColor: 'rgb(6,182,212)' }).then(() => location.reload());
         } catch (err) {
             Swal.fire({ title: 'Lỗi', text: err.message, icon: 'error' });
         }
     }
 
+    // === Logout ===
     async function logout() {
         await fetch('/api/auth/logout', { method:'POST' });
         window.location.href = '/login';
     }
 
-    setDefaultRange();
+    // === Initialize ===
+    updateStats();
+    filterView('today');
 </script>
 </body>
 </html>

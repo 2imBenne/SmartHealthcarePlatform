@@ -53,8 +53,10 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--te
     background:linear-gradient(135deg,rgb(8,145,178),rgb(var(--c)));
     box-shadow:0 4px 12px rgba(var(--c),.25)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(var(--c),.3)}
-.btn-green{background:linear-gradient(135deg,rgb(5,150,105),rgb(var(--g)));box-shadow:0 4px 12px rgba(var(--g),.25)}
-.btn-green:hover{box-shadow:0 6px 16px rgba(var(--g),.3)}
+.btn-green{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;
+    font-size:13px;font-weight:600;color:#fff;border:none;cursor:pointer;transition:all .2s;
+    font-family:'Be Vietnam Pro',sans-serif;
+    background:linear-gradient(135deg,rgb(5,150,105),rgb(var(--g)));box-shadow:0 4px 12px rgba(var(--g),.25)}
 .btn-ghost{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;
     color:var(--dim);background:var(--surface2);border:1px solid var(--border);
     cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
